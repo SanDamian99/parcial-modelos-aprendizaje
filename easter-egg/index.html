@@ -169,6 +169,10 @@
                         llorar.</button>
                     <button class="option-btn" onclick="answer('bandura')">👀 Lo sientas al lado de alguien muy
                         tranquilo.</button>
+                    <button class="option-btn" onclick="answer('maslow')">🏔️ Le preguntas en qué nivel de la pirámide
+                        está atascado.</button>
+                    <button class="option-btn" onclick="answer('zimbardo')">🔒 Lo metes en una sala pequeña a ver cómo
+                        reacciona bajo presión.</button>
                 </div>
             </div>
             <div id="q2" class="question-container">
@@ -182,6 +186,10 @@
                         cambio?</button>
                     <button class="option-btn" onclick="answer('bandura')">😌 Voy a observar cómo lo maneja mi colega
                         primero.</button>
+                    <button class="option-btn" onclick="answer('maslow')">🏔️ Claramente sus necesidades de estima no
+                        están satisfechas. Pobrecito.</button>
+                    <button class="option-btn" onclick="answer('zimbardo')">👮 Interesante. ¿Quién le dio ese poder y
+                        por qué lo está usando así?</button>
                 </div>
             </div>
             <div id="q3" class="question-container">
@@ -195,6 +203,10 @@
                         resultados.</button>
                     <button class="option-btn" onclick="answer('bandura')">🤝 Colaborativo, aprendo observando a
                         otros.</button>
+                    <button class="option-btn" onclick="answer('maslow')">🌱 Humanista, centrado en el potencial humano
+                        y la autorrealización.</button>
+                    <button class="option-btn" onclick="answer('zimbardo')">🎭 Experimental, provocador, con variables
+                        que se me van un poco de las manos.</button>
                 </div>
             </div>
             <div id="q4" class="question-container">
@@ -207,6 +219,10 @@
                         sueño?</button>
                     <button class="option-btn" onclick="answer('bandura')">📺 ¿Dónde aprendió a tenerle miedo a las
                         serpientes?</button>
+                    <button class="option-btn" onclick="answer('maslow')">🏔️ ¿Sus necesidades básicas están cubiertas?
+                        Empecemos por ahí.</button>
+                    <button class="option-btn" onclick="answer('zimbardo')">🧪 Pondría a 10 personas más a soñar lo
+                        mismo y vería qué pasa en grupo.</button>
                 </div>
             </div>
             <div id="q5" class="question-container">
@@ -220,6 +236,10 @@
                         más.'</button>
                     <button class="option-btn" onclick="answer('bandura')">🌟 'Somos lo que observamos y
                         practicamos.'</button>
+                    <button class="option-btn" onclick="answer('maslow')">🌟 'Lo que un hombre puede ser, debe
+                        serlo.'</button>
+                    <button class="option-btn" onclick="answer('zimbardo')">😬 'Las situaciones moldean la conducta más
+                        que el carácter individual.'</button>
                 </div>
             </div>
             <div id="q6" class="question-container">
@@ -233,6 +253,10 @@
                         variable.</button>
                     <button class="option-btn" onclick="answer('bandura')">🎬 Una película que escribo observando a los
                         demás.</button>
+                    <button class="option-btn" onclick="answer('maslow')">🏔️ Una búsqueda constante de autorrealización
+                        que nunca termina de llegar.</button>
+                    <button class="option-btn" onclick="answer('zimbardo')">🔬 Un experimento social en curso donde yo
+                        soy simultáneamente el investigador y el sujeto.</button>
                 </div>
             </div>
         </div>
@@ -247,7 +271,8 @@
 
     <script>
         let currentQ = 1;
-        const scores = { freud: 0, pavlov: 0, skinner: 0, bandura: 0 };
+        const scores = { freud: 0, pavlov: 0, skinner: 0, bandura: 0, maslow: 0, zimbardo: 0 };
+        let firstChoice = null;
         const totalQ = 6;
 
         const RESULTS = {
@@ -270,8 +295,30 @@
                 icon: "👀",
                 title: "ERES UN BANDURA MODERNO",
                 text: "Aprendes todo observando a otros y luego lo haces mejor. Tienes alta autoeficacia y probablemente ya sabías el resultado de este test antes de terminarlo. Eres el psicólogo que en vez de intervenir primero, observa.<br><br><strong>Dato curioso:</strong> Bandura llegó accidentalmente a Stanford porque no tenía otra cosa que hacer ese semestre. El aprendizaje social funciona también para las carreras."
+            },
+            maslow: {
+                icon: "🏔️",
+                title: "ERES UN MASLOW EN ASCENSO",
+                text: "Ves la pirámide en todas partes. En el menú del restaurante. En los grupos de WhatsApp. En tu propia lista de pendientes. Tienes una fe inquebrantable en el potencial humano, lo cual es hermoso, aunque a veces la gente solo quiere que la dejes en paz.<br><br><strong>Tu superpoder:</strong> encontrar la necesidad insatisfecha detrás de cualquier conducta.<br><strong>Tu kryptonita:</strong> explicarle la pirámide a alguien que no te preguntó.<br><br><strong>Dato curioso:</strong> Maslow estudió a los mejores seres humanos de la historia para construir su teoría — Einstein, Lincoln, Gandhi. Básicamente inventó la psicología positiva mirando hacia arriba, no hacia los problemas. Qué refrescante. Qué ingenuo. Qué genial."
+            },
+            zimbardo: {
+                icon: "🔒",
+                title: "ERES UN ZIMBARDO DESATADO",
+                text: "Ves dinámica de poder en cada interacción social. Sabes que cualquier persona normal, bajo las condiciones correctas, puede convertirse en algo irreconocible. Incluyéndote a ti. Especialmente a ti.<br><br><strong>Tu superpoder:</strong> entender cómo los roles y situaciones transforman la conducta.<br><strong>Tu kryptonita:</strong> que tus experimentos tienden a descontrolarse antes de que te des cuenta.<br><br><strong>Dato curioso:</strong> el Experimento de la Prisión de Stanford duró 6 días de los 14 planeados porque se volvió demasiado real. Zimbardo mismo se metió tanto en el rol de \"superintendente\" que necesitó que su novia desde afuera le dijera que parara. El investigador también fue sujeto del experimento. Como tú, ahora mismo."
             }
         };
+
+        document.addEventListener('DOMContentLoaded', () => {
+            // Randomize options
+            document.querySelectorAll('.options').forEach(optContainer => {
+                const buttons = Array.from(optContainer.children);
+                for (let i = buttons.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [buttons[i], buttons[j]] = [buttons[j], buttons[i]];
+                }
+                buttons.forEach(btn => optContainer.appendChild(btn));
+            });
+        });
 
         function startTest() {
             document.getElementById('intro').style.display = 'none';
@@ -280,6 +327,7 @@
         }
 
         function answer(psychologist) {
+            if (!firstChoice) firstChoice = psychologist;
             scores[psychologist]++;
             document.getElementById(`q${currentQ}`).classList.remove('active');
 
@@ -298,11 +346,21 @@
             document.getElementById('result').classList.add('active');
 
             // Find winner
-            let winner = 'freud';
-            let max = scores.freud;
-            ['pavlov', 'skinner', 'bandura'].forEach(p => {
-                if (scores[p] > max) { max = scores[p]; winner = p; }
+            let max = -1;
+            let winners = [];
+            ['freud', 'pavlov', 'skinner', 'bandura', 'maslow', 'zimbardo'].forEach(p => {
+                if (scores[p] > max) { max = scores[p]; winners = [p]; }
+                else if (scores[p] === max) { winners.push(p); }
             });
+
+            let winner = winners[0];
+            if (winners.length > 1) {
+                if (winners.includes(firstChoice)) {
+                    winner = firstChoice;
+                } else {
+                    winner = winners[Math.floor(Math.random() * winners.length)];
+                }
+            }
 
             const res = RESULTS[winner];
             document.getElementById('resIcon').textContent = res.icon;
