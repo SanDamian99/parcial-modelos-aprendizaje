@@ -34,6 +34,11 @@ const State = {
         gameData.niveles[`nivel${levelIndex}`] = data;
         gameData.nivel_alcanzado = Math.max(gameData.nivel_alcanzado || 0, levelIndex);
         sessionStorage.setItem('gameData', JSON.stringify(gameData));
+
+        // Regla 4: Si se termina el nivel 6, marcar el parcial como completado
+        if (levelIndex === 6 && data.completado) {
+            this.setCompleted();
+        }
     },
 
     saveGameOpenAnswers(answers) {
@@ -46,6 +51,48 @@ const State = {
     getGameData() {
         const res = sessionStorage.getItem('gameData');
         return res ? JSON.parse(res) : { niveles: {}, nivel_alcanzado: 0, respuestas_abiertas: {} };
+    },
+
+    setCompleted() {
+        sessionStorage.setItem('parcial_completado', 'true');
+    },
+
+    isCompleted() {
+        return sessionStorage.getItem('parcial_completado') === 'true';
+    },
+
+    /**
+     * Lógica central del aviso de sesión para index.html
+     */
+    checkSession() {
+        // REGLA 2: Si el parcial ya fue completado, limpiar sessionStorage automáticamente
+        if (this.isCompleted()) {
+            sessionStorage.clear();
+            return;
+        }
+
+        // REGLA 1 y 3: Si hay sesión en progreso, mostrar modal
+        if (this.isLoggedIn()) {
+            const modal = document.getElementById('sessionModal');
+            if (!modal) return;
+
+            modal.classList.remove('hidden');
+
+            document.getElementById('continueBtn').onclick = () => {
+                const quizResults = this.getQuizResults();
+                // Si ya terminó el quiz, ir al juego. Si no, al quiz.
+                if (quizResults && quizResults.puntaje_total !== undefined) {
+                    window.location.href = 'parte2/index.html';
+                } else {
+                    window.location.href = 'parte1/index.html';
+                }
+            };
+
+            document.getElementById('restartBtn').onclick = () => {
+                sessionStorage.clear();
+                modal.classList.add('hidden');
+            };
+        }
     },
 
     buildFinalPayload() {
