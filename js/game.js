@@ -767,7 +767,7 @@ async function finishGame() {
                 
                 <div style="text-align:center; padding:1.5rem 0; border-top:2px solid #e2e8f0; border-bottom:2px solid #e2e8f0; margin-bottom:1.5rem;">
                     <span style="font-size:1.2rem; display:block; margin-bottom:0.5rem; color:#64748b;">Calificación Final</span>
-                    <strong style="font-size:3rem; color: ${nota.nota_final >= 3.0 ? 'var(--success)' : 'var(--danger)'};">${nota.nota_final.toFixed(1)}</strong>
+                    <strong id="finalScoreValue" style="font-size:3rem; cursor:pointer; color: ${nota.nota_final >= 3.0 ? 'var(--success)' : 'var(--danger)'};">${nota.nota_final.toFixed(1)}</strong>
                     <span style="font-size:1.5rem; color:#94a3b8;">/ 5.0</span>
                 </div>
 
@@ -777,7 +777,50 @@ async function finishGame() {
                 </div>
             </div>
             <button class="btn mt-2" style="margin-top:2rem;" onclick="window.location.href='../index.html'">Volver a la Pantalla de Inicio</button>
+            <div style="margin-top:2rem;">
+                <button id="secretBtnFinal" class="hidden" style="background:linear-gradient(45deg, #ff00cc, #3333ff); color:white; padding:10px 20px; border:none; border-radius:8px; cursor:pointer; font-weight:bold; box-shadow:0 0 15px rgba(255,0,204,0.5); animation: pulse 2s infinite;" onclick="window.open('../easter-egg/index.html', '_blank')">✨ Descubrir Secreto: ¿Qué teoría eres? ✨</button>
+            </div>
         `;
+
+        // Easter Egg Logic for final score
+        setTimeout(() => {
+            const scoreElement = document.getElementById('finalScoreValue');
+            const secretButton = document.getElementById('secretBtnFinal');
+            let clickCount = 0;
+            let clickTimer = null;
+
+            if (scoreElement) {
+                scoreElement.addEventListener('click', () => {
+                    clickCount++;
+                    clearTimeout(clickTimer);
+
+                    if (clickCount >= 7) {
+                        clickCount = 0;
+                        if (secretButton.classList.contains('hidden')) {
+                            // Play sound
+                            try {
+                                const AudioContext = window.AudioContext || window.webkitAudioContext;
+                                const ctx = new AudioContext();
+                                const osc = ctx.createOscillator();
+                                const gain = ctx.createGain();
+                                osc.type = 'sine';
+                                osc.frequency.setValueAtTime(880, ctx.currentTime);
+                                gain.gain.setValueAtTime(0.1, ctx.currentTime);
+                                gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 1);
+                                osc.connect(gain);
+                                gain.connect(ctx.destination);
+                                osc.start();
+                                osc.stop(ctx.currentTime + 1);
+                            } catch (e) { }
+                            secretButton.classList.remove('hidden');
+                        }
+                    }
+
+                    clickTimer = setTimeout(() => { clickCount = 0; }, 3000);
+                });
+            }
+        }, 100);
+
     } else {
         document.getElementById('maxLevelDisplay').textContent = gd.nivel_alcanzado || 0;
     }
