@@ -1,4 +1,6 @@
 /* css/game.css */
+/* Estilos específicos del juego "Clínica del Comportamiento" */
+
 .game-container {
     max-width: 900px;
 }
@@ -37,6 +39,7 @@
     letter-spacing: 2px;
 }
 
+/* Tarjeta del paciente con avatar */
 .patient-card {
     display: flex;
     align-items: center;
@@ -65,6 +68,7 @@
 
 .avatar.happy {
     transform: scale(1.1);
+    filter: none;
 }
 
 .case-text {
@@ -83,7 +87,33 @@
     margin-bottom: 1.5rem;
 }
 
-/* Drag and Drop Elements */
+/* ═══════════════════════════════════════
+   Asistente Virtual (Tutorial)
+   ═══════════════════════════════════════ */
+.assistant-bubble {
+    background: linear-gradient(135deg, #e8f4fd 0%, #f0f7ff 100%);
+    border: 1px solid #b0d4f1;
+    border-radius: 12px;
+    padding: 1.2rem 1.5rem;
+    margin-bottom: 1.5rem;
+    position: relative;
+    font-size: 0.95rem;
+    line-height: 1.6;
+    color: #2c3e50;
+}
+
+.assistant-bubble::before {
+    content: '🧠 Asistente Clínico';
+    display: block;
+    font-weight: 700;
+    color: var(--primary);
+    margin-bottom: 0.5rem;
+    font-size: 1rem;
+}
+
+/* ═══════════════════════════════════════
+   Drag and Drop
+   ═══════════════════════════════════════ */
 .dnd-source {
     display: flex;
     flex-wrap: wrap;
@@ -106,6 +136,8 @@
     font-size: 0.95rem;
     user-select: none;
     transition: transform 0.1s;
+    -webkit-user-select: none;
+    touch-action: none;
 }
 
 .draggable:active {
@@ -147,7 +179,9 @@
     width: 150px;
 }
 
-/* Timeline UI */
+/* ═══════════════════════════════════════
+   Línea de Tiempo (Nivel 2)
+   ═══════════════════════════════════════ */
 .timeline {
     position: relative;
     padding-left: 20px;
@@ -174,7 +208,9 @@
     border: 2px solid #fff;
 }
 
-/* Integrator Panel Grid */
+/* ═══════════════════════════════════════
+   Panel Integrador (Nivel 4)
+   ═══════════════════════════════════════ */
 .panel-grid {
     display: grid;
     grid-template-columns: 2fr 1.5fr 1.5fr;
@@ -210,6 +246,9 @@ textarea.form-control {
     min-height: 100px;
 }
 
+/* ═══════════════════════════════════════
+   Responsive
+   ═══════════════════════════════════════ */
 @media (max-width: 600px) {
     .panel-grid {
         grid-template-columns: 1fr;
@@ -227,5 +266,17 @@ textarea.form-control {
 
     .target-box {
         width: 100%;
+    }
+
+    .patient-card {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .case-text {
+        border-left: none;
+        border-top: 4px solid var(--primary-light);
+        padding-left: 0;
+        padding-top: 1rem;
     }
 }

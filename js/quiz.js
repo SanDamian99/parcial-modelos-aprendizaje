@@ -1,6 +1,12 @@
 // js/quiz.js
+// Lógica del Quiz de Opción Múltiple — Parte 1 del parcial
+// Selección determinista de preguntas basada en el código estudiantil.
 
-// Funciones de utilidad para pseudo-random determinista
+// ═══════════════════════════════════════
+// Generador pseudo-aleatorio determinista
+// ═══════════════════════════════════════
+
+/** Genera un hash numérico a partir de un string */
 function hashString(str) {
     let hash = 0;
     for (let i = 0; i < str.length; i++) {
@@ -9,6 +15,7 @@ function hashString(str) {
     return hash;
 }
 
+/** Generador Mulberry32 — PRNG determinista con semilla */
 function mulberry32(a) {
     return function () {
         var t = a += 0x6D2B79F5;
@@ -18,7 +25,7 @@ function mulberry32(a) {
     }
 }
 
-// Fisher-Yates shuffle determinista usando RNG
+/** Shuffle Fisher-Yates determinista */
 function shuffleArray(array, rng) {
     for (let i = array.length - 1; i > 0; i--) {
         const j = Math.floor(rng() * (i + 1));
@@ -26,13 +33,20 @@ function shuffleArray(array, rng) {
     }
 }
 
-// Variables globales del quiz
+// ═══════════════════════════════════════
+// Variables de estado del quiz
+// ═══════════════════════════════════════
 let currentQuestions = [];
 let currentIdx = 0;
 let scores = { clasico: 0, operante: 0, social: 0 };
-let startTime, timerInterval;
+let quizStartTime;
+let timerInterval;
+let timerRemaining;
+let answered = false; // Flag para prevenir doble-respuesta
 
-// DOM Elements
+// ═══════════════════════════════════════
+// Referencias al DOM
+// ═══════════════════════════════════════
 const timerDisplay = document.getElementById('timerDisplay');
 const progressDisplay = document.getElementById('progressDisplay');
 const questionText = document.getElementById('questionText');
@@ -43,7 +57,9 @@ const quizContainer = document.getElementById('quizContainer');
 const summaryContainer = document.getElementById('summaryContainer');
 const studentDisplay = document.getElementById('studentDisplay');
 
-// Inicialización
+// ═══════════════════════════════════════
+// Inicialización y restauración de estado
+// ═══════════════════════════════════════
 function initQuiz() {
     if (!State.isLoggedIn()) {
         window.location.href = '../index.html';
@@ -53,25 +69,24 @@ function initQuiz() {
     const student = State.getStudent();
     studentDisplay.textContent = `Estudiante: ${student.name} (${student.id})`;
 
-    // Si ya tiene resultados, saltar al resumen para mantener idempotencia
+    // Si ya tiene resultados finales, mostrar resumen directamente (idempotencia)
     const prevResults = State.getQuizResults();
-    if (prevResults) {
+    if (prevResults && prevResults.puntaje_total !== undefined) {
         showSummary(prevResults);
         return;
     }
 
-    // Generar pool de preguntas basado en el código estudiantil (Determinista)
+    // Generar pool de preguntas (determinista — misma semilla = mismas preguntas)
     const seed = hashString(student.id);
     const rng = mulberry32(seed);
 
     const bank = QUESTIONS_BANK;
 
-    // Filtrar por pilar teórico
+    // Filtrar por tema y seleccionar exactamente 5 por tema
     let clasico = bank.filter(q => q.topic === 'clasico');
     let operante = bank.filter(q => q.topic === 'operante');
     let social = bank.filter(q => q.topic === 'social');
 
-    // Seleccionar Qstns p/ tema pseudo-aleatoriamente
     shuffleArray(clasico, rng);
     shuffleArray(operante, rng);
     shuffleArray(social, rng);
@@ -80,30 +95,47 @@ function initQuiz() {
     operante = operante.slice(0, CONFIG.QUIZ.QUESTIONS_PER_TOPIC);
     social = social.slice(0, CONFIG.QUIZ.QUESTIONS_PER_TOPIC);
 
-    // Mezclar todo el subset final
+    // Mezclar las 15 preguntas seleccionadas
     currentQuestions = [...clasico, ...operante, ...social];
     if (CONFIG.QUIZ.RANDOMIZE_QUESTIONS) {
         shuffleArray(currentQuestions, rng);
     }
 
-    // Iniciar timer
-    startTime = Date.now();
-    startTimer(CONFIG.QUIZ.TIME_LIMIT_MINUTES * 60);
+    // Restaurar progreso parcial si existe (recarga de página)
+    const savedProgress = sessionStorage.getItem('quizProgress');
+    if (savedProgress) {
+        const progress = JSON.parse(savedProgress);
+        currentIdx = progress.currentIdx || 0;
+        scores = progress.scores || { clasico: 0, operante: 0, social: 0 };
+        timerRemaining = progress.timerRemaining;
+    }
 
-    // Mostrar primera pregunta
+    // Iniciar temporizador
+    quizStartTime = Date.now();
+    const duration = timerRemaining || CONFIG.QUIZ.TIME_LIMIT_MINUTES * 60;
+    startTimer(duration);
+
+    // Mostrar pregunta actual
     renderQuestion();
 }
 
-// Temporizador visual
+// ═══════════════════════════════════════
+// Temporizador con persistencia
+// ═══════════════════════════════════════
 function startTimer(durationSeconds) {
-    let timeRemaining = durationSeconds;
-    updateTimerDisplay(timeRemaining);
+    timerRemaining = durationSeconds;
+    updateTimerDisplay(timerRemaining);
 
     timerInterval = setInterval(() => {
-        timeRemaining--;
-        updateTimerDisplay(timeRemaining);
+        timerRemaining--;
+        updateTimerDisplay(timerRemaining);
 
-        if (timeRemaining <= 0) {
+        // Guardar progreso cada 10 segundos
+        if (timerRemaining % 10 === 0) {
+            saveQuizProgress();
+        }
+
+        if (timerRemaining <= 0) {
             clearInterval(timerInterval);
             handleTimeOut();
         }
@@ -120,12 +152,29 @@ function updateTimerDisplay(seconds) {
 }
 
 function handleTimeOut() {
-    alert("El tiempo se ha agotado. Enviaremos tus respuestas recopiladas automáticamente.");
-    // Finalizar con el score actual de preguntas respondidas
+    alert("El tiempo se ha agotado. Enviaremos tus respuestas automáticamente.");
     finishQuiz();
 }
 
+/** Persiste el progreso parcial en sessionStorage */
+function saveQuizProgress() {
+    sessionStorage.setItem('quizProgress', JSON.stringify({
+        currentIdx: currentIdx,
+        scores: scores,
+        timerRemaining: timerRemaining
+    }));
+}
+
+// ═══════════════════════════════════════
+// Renderizado de pregunta y opciones
+// ═══════════════════════════════════════
 function renderQuestion() {
+    if (currentIdx >= currentQuestions.length) {
+        finishQuiz();
+        return;
+    }
+
+    answered = false;
     const q = currentQuestions[currentIdx];
     progressDisplay.textContent = `Pregunta ${currentIdx + 1} de ${CONFIG.QUIZ.TOTAL_QUESTIONS}`;
     questionText.textContent = q.question;
@@ -134,9 +183,9 @@ function renderQuestion() {
     nextBtn.classList.add('hidden');
     optionsContainer.innerHTML = '';
 
+    // Construir opciones mezcladas determinísticamente
     let options = [q.correct, ...q.distractors];
     if (CONFIG.QUIZ.RANDOMIZE_OPTIONS) {
-        // Permutación de las opciones basada en un seed derivado de la pregunta y el estudiante
         const qRng = mulberry32(hashString(q.id + State.getStudent().id));
         shuffleArray(options, qRng);
     }
@@ -145,13 +194,20 @@ function renderQuestion() {
         const btn = document.createElement('button');
         btn.className = 'option-btn';
         btn.textContent = opt;
-        btn.onclick = () => handleAnswer(opt, btn, q);
+        btn.addEventListener('click', () => handleAnswer(opt, btn, q));
         optionsContainer.appendChild(btn);
     });
 }
 
+// ═══════════════════════════════════════
+// Manejo de respuesta con feedback inmediato
+// ═══════════════════════════════════════
 function handleAnswer(selectedOpt, btnElement, q) {
-    // Desactivar botones previene múltiples envíos
+    // Prevenir doble-clic
+    if (answered) return;
+    answered = true;
+
+    // Desactivar todas las opciones
     Array.from(optionsContainer.children).forEach(btn => {
         btn.disabled = true;
         if (btn.textContent === q.correct) {
@@ -172,10 +228,14 @@ function handleAnswer(selectedOpt, btnElement, q) {
 
     feedbackContainer.classList.remove('hidden');
 
+    // Guardar progreso tras cada respuesta
+    saveQuizProgress();
+
     if (currentIdx < currentQuestions.length - 1) {
         nextBtn.textContent = "Siguiente Pregunta";
         nextBtn.onclick = () => {
             currentIdx++;
+            saveQuizProgress();
             renderQuestion();
         };
     } else {
@@ -185,10 +245,13 @@ function handleAnswer(selectedOpt, btnElement, q) {
     nextBtn.classList.remove('hidden');
 }
 
+// ═══════════════════════════════════════
+// Finalización del quiz
+// ═══════════════════════════════════════
 async function finishQuiz() {
     clearInterval(timerInterval);
 
-    const timeElapsed = Math.floor((Date.now() - startTime) / 1000);
+    const timeElapsed = CONFIG.QUIZ.TIME_LIMIT_MINUTES * 60 - (timerRemaining || 0);
     const total = scores.clasico + scores.operante + scores.social;
 
     const results = {
@@ -197,10 +260,12 @@ async function finishQuiz() {
         puntaje_social: scores.social,
         puntaje_total: total,
         tiempo_segundos: timeElapsed,
-        preguntas_respondidas: currentIdx + 1
+        preguntas_respondidas: Math.min(currentIdx + 1, CONFIG.QUIZ.TOTAL_QUESTIONS)
     };
 
     State.saveQuizResults(results);
+    // Limpiar progreso parcial
+    sessionStorage.removeItem('quizProgress');
 
     // Enviar a Google Sheets
     const payload = State.buildFinalPayload();
@@ -209,6 +274,9 @@ async function finishQuiz() {
     showSummary(results);
 }
 
+// ═══════════════════════════════════════
+// Resumen final
+// ═══════════════════════════════════════
 function showSummary(results) {
     quizContainer.classList.add('hidden');
     summaryContainer.classList.remove('hidden');
@@ -225,5 +293,5 @@ function showSummary(results) {
     });
 }
 
-// Escuchar el evento de carga para inicializar
+// Inicializar al cargar la página
 window.addEventListener('DOMContentLoaded', initQuiz);

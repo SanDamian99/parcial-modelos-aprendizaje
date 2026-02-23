@@ -53,34 +53,6 @@
         .option-btn:disabled {
             cursor: default;
         }
-
-        .hidden {
-            display: none !important;
-        }
-
-        #summary {
-            text-align: center;
-        }
-
-        .score-box {
-            background: #f8f9fa;
-            padding: 1rem;
-            border-radius: var(--border-radius);
-            margin: 1rem 0;
-            display: flex;
-            justify-content: space-around;
-            flex-wrap: wrap;
-        }
-
-        .score-item {
-            margin: 0.5rem;
-        }
-
-        .score-item strong {
-            display: block;
-            font-size: 1.2rem;
-            color: var(--primary);
-        }
     </style>
 </head>
 
@@ -92,7 +64,7 @@
         </header>
 
         <div id="quizContainer" class="card">
-            <div class="timer" id="timerDisplay">Tiempo restante: 00:00</div>
+            <div class="timer" id="timerDisplay">Tiempo restante: 25:00</div>
             <div id="progressDisplay" style="margin-bottom:1rem;color:#666;font-weight:500;">Pregunta 1 de 15</div>
 
             <h3 id="questionText">Cargando pregunta...</h3>
@@ -110,8 +82,7 @@
 
         <div id="summaryContainer" class="card hidden">
             <h2>Resultados de la Parte 1</h2>
-            <p>Has completado el quiz satisfactoriamente. Aquí tienes un resumen de tu desempeño por temática evaluada:
-            </p>
+            <p>Has completado el quiz. Aquí tienes un resumen de tu desempeño por temática evaluada:</p>
 
             <div class="score-box" id="scoreDetails">
                 <!-- Creado por JS -->
@@ -119,8 +90,8 @@
             <p class="text-center" style="font-size:1.2rem;"><strong>Puntaje Total:</strong> <span
                     id="totalScore">0/15</span></p>
 
-            <p class="mt-2 mb-2 text-center">A continuación, pasarás a la Parte 2: El juego de Roleplay. Una vez
-                inicies, tu avance en esta primera sección y tu nota quedarán guardados.</p>
+            <p class="mt-2 mb-2 text-center">A continuación, pasarás a la Parte 2: El juego interactivo "Clínica del
+                Comportamiento". Tu avance en la Parte 1 ya quedó registrado.</p>
             <button id="goToGameBtn" class="btn mb-2">Continuar a la Parte 2</button>
         </div>
     </div>

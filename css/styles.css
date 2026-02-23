@@ -10,7 +10,7 @@
   --text-dark: #333;
   --text-light: #fff;
   --border-radius: 8px;
-  --shadow: 0 4px 6px rgba(0,0,0,0.1);
+  --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   --font-family: 'Inter', sans-serif;
 }
 
@@ -49,7 +49,8 @@ h1 {
   font-size: 1.8rem;
 }
 
-h2, h3 {
+h2,
+h3 {
   font-weight: 600;
   color: var(--primary);
   margin-bottom: 1rem;
@@ -87,7 +88,7 @@ h2, h3 {
 .form-control:focus {
   outline: none;
   border-color: var(--primary);
-  box-shadow: 0 0 0 2px rgba(26,60,94,0.2);
+  box-shadow: 0 0 0 2px rgba(26, 60, 94, 0.2);
 }
 
 /* Botones */
@@ -117,14 +118,85 @@ h2, h3 {
   cursor: not-allowed;
 }
 
-.btn-success { background-color: var(--success); }
-.btn-success:hover { background-color: #27ae60; }
-.btn-danger { background-color: var(--danger); }
-.btn-danger:hover { background-color: #c0392b; }
+.btn-success {
+  background-color: var(--success);
+}
 
-/* Tipografía de utilidad */
-.text-center { text-align: center; }
-.mt-1 { margin-top: 0.5rem; }
-.mt-2 { margin-top: 1rem; }
-.mb-1 { margin-bottom: 0.5rem; }
-.mb-2 { margin-bottom: 1rem; }
+.btn-success:hover {
+  background-color: #27ae60;
+}
+
+.btn-danger {
+  background-color: var(--danger);
+}
+
+.btn-danger:hover {
+  background-color: #c0392b;
+}
+
+/* Feedback — usado en quiz y juego */
+.feedback {
+  padding: 1rem 1.5rem;
+  border-radius: var(--border-radius);
+  margin-top: 1rem;
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
+.feedback.correct {
+  background-color: #d4edda;
+  border: 1px solid var(--success);
+  color: #155724;
+}
+
+.feedback.incorrect {
+  background-color: #f8d7da;
+  border: 1px solid var(--danger);
+  color: #721c24;
+}
+
+/* Utilidades globales */
+.hidden {
+  display: none !important;
+}
+
+.text-center {
+  text-align: center;
+}
+
+.mt-1 {
+  margin-top: 0.5rem;
+}
+
+.mt-2 {
+  margin-top: 1rem;
+}
+
+.mb-1 {
+  margin-bottom: 0.5rem;
+}
+
+.mb-2 {
+  margin-bottom: 1rem;
+}
+
+/* Score box (usado en quiz summary y game summary) */
+.score-box {
+  background: #f8f9fa;
+  padding: 1rem;
+  border-radius: var(--border-radius);
+  margin: 1rem 0;
+  display: flex;
+  justify-content: space-around;
+  flex-wrap: wrap;
+}
+
+.score-item {
+  margin: 0.5rem;
+}
+
+.score-item strong {
+  display: block;
+  font-size: 1.2rem;
+  color: var(--primary);
+}
