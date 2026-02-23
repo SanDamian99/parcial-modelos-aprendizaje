@@ -30,6 +30,7 @@ let currentIdx = 0;
 let scores = { clasico: 0, operante: 0, social: 0 };
 let quizStartTime, timerInterval, timerRemaining;
 let answered = false;
+let usedHelpInCurrentQuestion = false; // Rastro de ayuda visual
 
 const timerDisplay = document.getElementById('timerDisplay');
 const progressDisplay = document.getElementById('progressDisplay');
@@ -153,6 +154,7 @@ function saveQuizProgress() {
 function renderQuestion() {
     if (currentIdx >= currentQuestions.length) { finishQuiz(); return; }
     answered = false;
+    usedHelpInCurrentQuestion = false; // Reset cada pregunta
     const q = currentQuestions[currentIdx];
     progressDisplay.textContent = `Pregunta ${currentIdx + 1} de ${CONFIG.QUIZ.TOTAL_QUESTIONS}`;
     questionText.textContent = q.question;
@@ -177,6 +179,15 @@ function renderQuestion() {
     // Ajuste 4: Botón de ayuda visual si la pregunta involucra programas de reforzamiento
     if (typeof ReinforcementHelper !== 'undefined' && ReinforcementHelper.shouldShow(q.concept)) {
         ReinforcementHelper.createButton(document.getElementById('quizContainer'));
+        // Evento para rastrear el clic en el botón de ayuda
+        const rhBtn = document.querySelector('.rh-btn');
+        if (rhBtn) {
+            const originalOnclick = rhBtn.onclick;
+            rhBtn.onclick = (e) => {
+                usedHelpInCurrentQuestion = true;
+                originalOnclick.call(ReinforcementHelper, e);
+            };
+        }
     } else {
         const existing = document.querySelector('.rh-btn');
         if (existing) existing.remove();
@@ -198,8 +209,11 @@ function handleAnswer(selectedOpt, btnElement, q) {
     } else {
         btnElement.classList.add('correct');
         feedbackContainer.className = 'feedback correct';
-        feedbackContainer.innerHTML = `<strong>✅ ¡Excelente!</strong><br/>Has identificado correctamente el principio psicológico aplicado en este caso.`;
-        scores[q.topic]++;
+        feedbackContainer.innerHTML = `<strong>✅ ¡Excelente!</strong><br/>Has identificado correctamente el principio psicológico aplicado en este caso.${usedHelpInCurrentQuestion ? '<br/><small>⚠️ Se aplicó penalidad por uso de ayuda visual (80%).</small>' : ''}`;
+
+        // Aplicar puntaje basado en ayuda visual
+        const puntos = usedHelpInCurrentQuestion ? SCORING.quiz.puntos_por_pregunta.con_ayuda_visual : SCORING.quiz.puntos_por_pregunta.primer_intento;
+        scores[q.topic] += (puntos / 100); // Guardamos como fracción de la pregunta (1.0 o 0.8)
     }
     feedbackContainer.classList.remove('hidden');
     saveQuizProgress();

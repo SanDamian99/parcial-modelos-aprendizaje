@@ -413,7 +413,12 @@ function renderTrainingTurn(data) {
         <h4>Turno ${turn.turno} de 5 — ${turn.concepto}</h4>
         <p style="font-style:italic;margin-bottom:1rem">${turn.situacion}</p>
         <div class="options-grid">`;
-    let indices = turn.opciones.map((_, i) => i).sort(() => Math.random() - 0.5);
+
+    // Mezclar índices de forma determinista para Nivel 6 Turnos
+    const seed = Utils.hashCode(State.codigo + "nivel6" + turn.turno);
+    let indices = [0, 1, 2, 3];
+    indices = mezclarOpciones(indices, seed);
+
     indices.forEach(i => {
         h += `<button class="option-btn bruno-opt" data-idx="${i}">${turn.opciones[i]}</button>`;
     });
@@ -508,16 +513,26 @@ function handleMinefieldClick(cell, data) {
 
     const mqDiv = document.getElementById('mfQuestion');
     mqDiv.classList.remove('hidden');
+
+    // Mezcla determinista de opciones
+    const seed = Utils.hashCode(State.codigo + "nivel6_mina_" + minefieldQIdx);
+    const opcionesMezcladas = mezclarOpciones(q.opciones, seed);
+
     let h = `<h4>🐕 Bruno olfatea... ¿Puedes ayudarlo?</h4><p style="font-style:italic;margin-bottom:1rem">${q.pregunta}</p><div class="options-grid">`;
-    q.opciones.forEach((opt, i) => h += `<button class="option-btn mf-opt" data-idx="${i}">${opt}</button>`);
+    opcionesMezcladas.forEach(opt => h += `<button class="option-btn mf-opt" data-optval="${opt.replace(/"/g, '&quot;')}">${opt}</button>`);
     h += '</div>';
     mqDiv.innerHTML = h;
 
     mqDiv.querySelectorAll('.mf-opt').forEach(btn => {
         btn.addEventListener('click', () => {
-            const idx = parseInt(btn.dataset.idx);
-            const correct = idx === q.correcta;
-            mqDiv.querySelectorAll('.mf-opt').forEach(b => { b.disabled = true; if (parseInt(b.dataset.idx) === q.correcta) b.classList.add('correct'); });
+            const optVal = btn.dataset.optval;
+            const correctText = q.opciones[q.correcta];
+            const correct = optVal === correctText;
+
+            mqDiv.querySelectorAll('.mf-opt').forEach(b => {
+                b.disabled = true;
+                if (b.dataset.optval === correctText) b.classList.add('correct');
+            });
             if (!correct) btn.classList.add('incorrect');
 
             const hasMine = cm.minas.some(m => m[0] === r && m[1] === c);
@@ -698,15 +713,17 @@ async function finishGame() {
     levelTitle.textContent = "Parcial Finalizado";
     gameSummary.classList.remove('hidden');
     const gd = State.getGameData();
-
     let payload = State.buildFinalPayload();
+
+    // Primero enviamos los datos (asíncrono)
+    await DB.sendData(payload);
 
     if (typeof calcularNota === 'function') {
         const nota = calcularNota(payload);
         payload.desglose_nota = nota;
 
         gameSummary.innerHTML = `
-            <h2 style="color:var(--primary); margin-bottom:1rem;">¡Has completado el Parcial Clínico!</h2>
+            <h2 style="color:var(--primary); margin-bottom:1rem;">¡Has completado el Parcial de Modelos de Aprendizaje!</h2>
             <p style="margin-bottom:1.5rem; color:#555">Tus respuestas y decisiones terapéuticas han sido procesadas por el sistema.</p>
             <div class="score-details" style="text-align:left; max-width:600px; margin: 0 auto; background:#f8fafc; padding:2rem; border-radius:12px; box-shadow:0 4px 15px rgba(0,0,0,0.05); border:1px solid #e2e8f0;">
                 <div style="display:flex; justify-content:space-between; margin-bottom:0.8rem; font-size:1.1rem;">
@@ -734,8 +751,6 @@ async function finishGame() {
     } else {
         document.getElementById('maxLevelDisplay').textContent = gd.nivel_alcanzado || 0;
     }
-
-    await DB.sendData(payload);
 }
 
 window.addEventListener('DOMContentLoaded', initGame);

@@ -1,22 +1,21 @@
-# Parcial Interactivo de Psicología — Modelos de Aprendizaje
-
-Aplicación web para evaluar de manera interactiva a estudiantes de Psicología en el módulo de **Modelos de Aprendizaje** (Primer Corte). Evalúa tres teorías: Conductismo Clásico (Pavlov), Conductismo Operante (Skinner/Thorndike) y Aprendizaje Social (Bandura).
-
+# Parcial de Modelos de Aprendizaje
+ 
+Aplicación web para evaluar de manera interactiva a estudiantes en el módulo de **Modelos de Aprendizaje** (Primer Corte). Evalúa tres teorías: Conductismo Clásico (Pavlov), Conductismo Operante (Skinner/Thorndike) y Aprendizaje Social (Bandura).
+ 
 ## 📋 Estructura del Parcial
-
+ 
 | Parte | Descripción | Peso |
 |-------|-------------|------|
-| **Parte 1** | Quiz de 15 preguntas (5 por teoría) con temporizador de 25 min | 40% |
-| **Parte 2** | Juego "Clínica del Comportamiento" — 5 niveles (Tutorial + 4 calificados) | 60% |
-
+| **Parte 1** | Quiz de 15 preguntas (5 por teoría) con temporizador de 20 min | 40% |
+| **Parte 2** | Aplicación Práctica con Casos Reales — 6 niveles educativos y clínicos | 60% |
+ 
 ---
-
-## 📥 Recepción de Resultados en Google Sheets
-
-Los resultados se envían automáticamente al endpoint de Google Apps Script en **tres momentos**:
+ 
+## 📤 Recepción de Resultados en Supabase
+ 
+Los resultados se envían automáticamente a **Supabase** en **dos momentos**:
 1. Al finalizar la Parte 1 (Quiz).
-2. Al completar cada nivel del juego.
-3. Al terminar todo el parcial.
+2. Al terminar todo el parcial (después del Nivel 6).
 
 El archivo JSON enviado contiene: `nombre`, `codigo`, `timestamp`, `parte1` (puntajes por teoría), `parte2` (niveles completados, vidas usadas, respuestas abiertas), y `nota_calculada`.
 
@@ -62,8 +61,8 @@ El banco contiene **45 preguntas** (15 por teoría). El formato de cada pregunta
 ---
 
 ## 🏥 Modificar Casos del Juego (`data/cases.js`)
-
-Los 5 casos están en `data/cases.js`. Para editar la narrativa clínica, modifica el campo `description`. Si cambias las opciones de respuesta, verifica que coincidan exactamente con los valores `correct` correspondientes.
+ 
+Los niveles están en `data/cases.js`. Para editar la narrativa, modifica el campo `description`. Si cambias las opciones de respuesta, verifica que coincidan exactamente con los valores `correct` correspondientes. El Nivel 6 está diseñado específicamente para Condicionamiento Clásico.
 
 ---
 
@@ -80,4 +79,4 @@ Los 5 casos están en `data/cases.js`. Para editar la narrativa clínica, modifi
 - **Determinismo:** La selección de 15 preguntas usa una semilla basada en el código estudiantil. Mismo código = mismas preguntas. Códigos diferentes = preguntas diferentes.
 - **Idempotencia:** Recargar la página no pierde el progreso (se guarda en `sessionStorage`).
 - **Anti-trampas:** Las respuestas correctas no están expuestas en atributos `data-` del DOM antes de responder.
-- **Tolerancia a fallos:** Si el envío a Google Sheets falla, el parcial sigue funcionando normalmente.
+- **Tolerancia a fallos:** El sistema maneja fallos de red de forma silenciosa para no interrumpir el flujo del estudiante.

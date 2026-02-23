@@ -89,7 +89,7 @@ const GAME_CASES = [
             "Refuerzo Continuo permanente"
         ],
         maintenance_correct: 0,
-        socratic_feedback: "❌ Análisis Operante Incorrecto.\\n💡 Piensa: En la Fase 1, la conducta cambia porque desaparece toda consecuencia. En la Fase 2, se 'añadió' reconocimiento (positivo) para aumentar la puntualidad. Para mantener una conducta a largo plazo sin que se extinga, ¿es mejor ser predecible o impredecible (variable)?"
+        socratic_feedback: "❌ Análisis Operante Incorrecto.\n💡 Piensa: En la Fase 1, observa qué ocurre cuando se suprimen todas las consecuencias de una conducta. En la Fase 2, evalúa si se añadió o se retiró un estímulo para fomentar la puntualidad. Por último, para mantener esa conducta a largo plazo y hacerla resistente a la extinción, ¿es más efectivo entregar el premio de forma rutinaria y exacta o de manera impredecible?"
     },
 
     // ═══════════════════════════════════════
@@ -121,7 +121,7 @@ const GAME_CASES = [
             "Habría suprimido el refuerzo vicario completamente."
         ],
         question_correct: 0,
-        socratic_feedback: "❌ Secuencia o respuesta incorrecta.\\n💡 Observa el flujo de Bandura: Para imitar a alguien (Modelo), primero debes ser un Observador. Luego le prestas Atención y lo guardas en tu mente (Retención). Después verificas si sabes hacerlo físicamente (Reproducción). Al ver que el modelo obtuvo un beneficio (Refuerzo Vicario) encuentras la Motivación, y todo cierra si crees en ti mismo (Autoeficacia). Revisa el orden y tu respuesta."
+        socratic_feedback: "❌ Secuencia o respuesta incorrecta.\n💡 Piensa: Según la teoría del Aprendizaje Social de Bandura, el proceso inicia identificando los roles (quién actúa y quién observa), seguido por procesos cognitivos (enfocar los sentidos, codificar el recuerdo y verificar la capacidad física para actuar), y termina con factores motivacionales (observar las consecuencias en el otro y creer en la propia capacidad). Analiza si tu secuencia respeta esta lógica y revisa tu respuesta a la pregunta final."
     },
 
     // ═══════════════════════════════════════
@@ -175,7 +175,7 @@ const GAME_CASES = [
             "Resignación aprendida en todos los estudiantes."
         ],
         predict_correct: 0,
-        socratic_feedback: "❌ Clasificación o predicción fallida.\\n💡 Analiza caso por caso: Si no sabes CUÁNDO habrá examen (predecibilidad de tiempo), es Variable. Mostrar el éxito de otros para motivar apela al aspecto Social (Incentivo). Si retiras el recreo (algo agradable), estás restando (-). Inténtalo de nuevo."
+        socratic_feedback: "❌ Clasificación o predicción fallida.\n💡 Analiza caso por caso: Para los exámenes sorpresa, pregúntate si el tiempo que transcurre entre ellos es fijo o azaroso. Para el ranking público, evalúa qué teoría se centra en el aprendizaje al observar el éxito ajeno. En cuanto a retirar el recreo, determina si se está añadiendo o quitando un estímulo, y si eso busca que una conducta aumente o disminuya."
     },
 
     // ═══════════════════════════════════════
@@ -312,9 +312,9 @@ const GAME_CASES = [
                     suboptima: { aprendizaje: 10, bienestar: 0 },
                     incorrecta: { aprendizaje: 0, bienestar: -15 }
                 },
-                explicacion_correcta: "Correcto. El olor a C4 (EN) se presenta seguido de la pelota (EI que genera excitación RI). Tras repeticiones, el C4 se volverá un EC que genera excitación (RC).",
-                explicacion_suboptima: "Eso es condicionamiento operante (moldear una conducta voluntaria). En esta fase buscamos crear un reflejo condicionado involuntario al olor.",
-                explicacion_incorrecta: "Gritarle (EI aversivo) asociará el olor con miedo/terror, y huirá del C4 en lugar de alertar excitado al humano."
+                explicacion_correcta: "✅ ¡Excelente decisión!\n💡 Recuerda: El olor a C4 (EN) se presenta seguido de la pelota (EI que genera excitación RI). Tras repeticiones, el C4 se volverá un EC que genera excitación (RC).\n📖 Concepto clave: Adquisición en condicionamiento clásico",
+                explicacion_suboptima: "❌ Decisión subóptima.\n💡 Piensa: Eso es condicionamiento operante (moldear una conducta voluntaria). En esta fase buscamos crear un reflejo condicionado involuntario al olor.\n📖 Concepto clave: Diferencia entre Clásico y Operante",
+                explicacion_incorrecta: "❌ Decisión incorrecta.\n💡 Piensa: Gritarle (EI aversivo) asociará el olor con miedo/terror, y huirá del C4 en lugar de alertar excitado al humano.\n📖 Concepto clave: Condicionamiento aversivo no deseado"
             },
             {
                 turno: 2,
@@ -333,9 +333,9 @@ const GAME_CASES = [
                     suboptima: { aprendizaje: 0, bienestar: -5 },
                     incorrecta: { aprendizaje: -10, bienestar: -10 }
                 },
-                explicacion_correcta: "Correcto. Bruno generalizó a olores químicos similares. La discriminación (presentar pólvora sin pelota, y C4 con pelota) afinará su olfato.",
-                explicacion_suboptima: "No es una pérdida de la respuesta. Al contrario, la respuesta (excitación) se ha expandido a demasiados estímulos similares no deseados.",
-                explicacion_incorrecta: "Los conceptos operantes (castigo) no aplican aquí, pues es una excitación biológica automática desencadenada por el olor."
+                explicacion_correcta: "✅ ¡Excelente decisión!\n💡 Recuerda: Bruno generalizó a olores químicos similares. La discriminación (presentar pólvora sin pelota, y C4 con pelota) afinará su olfato.\n📖 Concepto clave: Discriminación de estímulos",
+                explicacion_suboptima: "❌ Decisión subóptima.\n💡 Piensa: No es una pérdida de la respuesta. Al contrario, la respuesta (excitación) se ha expandido a demasiados estímulos similares no deseados.\n📖 Concepto clave: Generalización vs Extinción",
+                explicacion_incorrecta: "❌ Decisión incorrecta.\n💡 Piensa: Los conceptos operantes (castigo) no aplican aquí, pues es una excitación biológica automática desencadenada por el olor.\n📖 Concepto clave: Error de categoría teórica"
             },
             {
                 turno: 3,
@@ -354,9 +354,9 @@ const GAME_CASES = [
                     suboptima: { aprendizaje: 10, bienestar: -5 },
                     incorrecta: { aprendizaje: -10, bienestar: -15 }
                 },
-                explicacion_correcta: "Exacto. Cuando el EC (olor a C4) se presenta crónicamente sin el EI (pelota), la curva de respuesta condicionada cae hasta cero. Esto se llama extinción clásica.",
-                explicacion_suboptima: "La habituación aplica a estímulos innatos incondicionados, no a respuestas que fueron previamente aprendidas mediante emparejamiento asociativo.",
-                explicacion_incorrecta: "Evitación o refuerzo implican conducta motora para cambiar el ambiente. Aquí es la simple desaparición del reflejo interior de excitación ante un olor."
+                explicacion_correcta: "✅ ¡Excelente decisión!\n💡 Recuerda: Cuando el EC (olor a C4) se presenta crónicamente sin el EI (pelota), la curva de respuesta condicionada cae hasta cero.\n📖 Concepto clave: Extinción clásica",
+                explicacion_suboptima: "❌ Decisión subóptima.\n💡 Piensa: La habituación aplica a estímulos innatos incondicionados, no a respuestas que fueron previamente aprendidas mediante emparejamiento asociativo.\n📖 Concepto clave: Extinción vs Habituación",
+                explicacion_incorrecta: "❌ Decisión incorrecta.\n💡 Piensa: Evitación o refuerzo implican conducta motora para cambiar el ambiente. Aquí es la simple desaparición del reflejo interior de excitación ante un olor.\n📖 Concepto clave: Ausencia de respuesta condicionada"
             },
             {
                 turno: 4,
@@ -375,9 +375,9 @@ const GAME_CASES = [
                     suboptima: { aprendizaje: 10, bienestar: 0 },
                     incorrecta: { aprendizaje: -10, bienestar: -10 }
                 },
-                explicacion_correcta: "Muy bien. El condicionamiento de orden superior ocurre cuando un estímulo condicionado bien establecido (C4) se usa para condicionar un nuevo estímulo neutro (campanilla).",
-                explicacion_suboptima: "Aunque involucra dos sentidos, el mecanismo que explica la excitación acústica no es generalización pavloviana pura, sino la contigüidad entre un EN y un EC previo.",
-                explicacion_incorrecta: "No hay 'discriminación' en excitarse por ambas cosas, ni la sensibilización explica la asociación directa y cronológica."
+                explicacion_correcta: "✅ ¡Excelente decisión!\n💡 Recuerda: El condicionamiento de orden superior ocurre cuando un estímulo condicionado bien establecido (C4) se usa para condicionar un nuevo estímulo neutro (campanilla).\n📖 Concepto clave: Condicionamiento de segundo orden",
+                explicacion_suboptima: "❌ Decisión subóptima.\n💡 Piensa: Aunque involucra dos sentidos, el mecanismo que explica la excitación acústica no es generalización pavloviana pura, sino la contigüidad entre un EN y un EC previo.\n📖 Concepto clave: Condicionamiento intermodal",
+                explicacion_incorrecta: "❌ Decisión incorrecta.\n💡 Piensa: No hay 'discriminación' en excitarse por ambas cosas, ni la sensibilización explica la asociación directa y cronológica.\n📖 Concepto clave: Error en la identificación del proceso"
             },
             {
                 turno: 5,
@@ -396,9 +396,9 @@ const GAME_CASES = [
                     suboptima: { aprendizaje: 0, bienestar: -20 },
                     incorrecta: { aprendizaje: -20, bienestar: -30 }
                 },
-                explicacion_correcta: "El contracondicionamiento acopla el estímulo que produce pánico con un estímulo intenso que genera relajación/placer (comida). Es la mejor maniobra clínica.",
-                explicacion_suboptima: "Eso se llama 'Inundación' (Flooding). Puede funcionar tras agotamiento extremo, pero empuja el bienestar biológico del animal a mínimos peligrosos (riesgo de colapso emotivo).",
-                explicacion_incorrecta: "Las descargas castigan el miedo creando aún más pánico en bucle. Ignorar el miedo (operante) no frena en nada el terror reflexológico."
+                explicacion_correcta: "✅ ¡Excelente decisión!\n💡 Recuerda: El contracondicionamiento acopla el estímulo que produce pánico con un estímulo intenso que genera relajación/placer (comida).\n📖 Concepto clave: Contracondicionamiento clínico",
+                explicacion_suboptima: "❌ Decisión subóptima.\n💡 Piensa: Eso se llama 'Inundación' (Flooding). Puede funcionar tras agotamiento extremo, pero conlleva un alto riesgo de colapso emotivo.\n📖 Concepto clave: Inundación vs Contracondicionamiento",
+                explicacion_incorrecta: "❌ Decisión incorrecta.\n💡 Piensa: Las descargas castigan el miedo creando aún más pánico en bucle. Ignorar el miedo (operante) no frena en nada el terror reflexológico.\n📖 Concepto clave: Fracaso de la técnica aversiva"
             }
         ],
         campo_minado: {

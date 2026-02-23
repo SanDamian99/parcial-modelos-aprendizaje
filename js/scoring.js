@@ -105,6 +105,20 @@ function calcularNota(estadoEstudiante) {
                 rachaSinPerderVidas = 0;
             }
 
+            // Bonus: Nivel difícil sin hacer fácil
+            // Se otorga si el nivel es 4, 5 o 6 y los niveles 1 o 2 no están completados aún
+            if (['nivel4', 'nivel5', 'nivel6'].includes(keyNivel)) {
+                const n1 = estadoEstudiante.parte2.niveles['nivel1'];
+                const n2 = estadoEstudiante.parte2.niveles['nivel2'];
+                const n1Ok = n1 && n1.completado;
+                const n2Ok = n2 && n2.completado;
+
+                if (!n1Ok || !n2Ok) {
+                    bonusObtenidos.push(`Bonus Dificultad: ${keyNivel}`);
+                    bonusActual += SCORING.juego.bonus.nivel_dificil_sin_hacer_facil / 100;
+                }
+            }
+
             notaP2 += (puntajeNivel + bonusActual) * config.peso * SCORING.juego.peso_total;
         }
     }

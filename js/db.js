@@ -52,25 +52,73 @@ const DB = (function () {
             duracion_total_segundos: payload.duracion_total_segundos ?? null
         };
 
-        const response = await fetch(
-            `${CONFIG.SUPABASE_URL}/rest/v1/resultados_parcial`,
-            {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    "apikey": CONFIG.SUPABASE_ANON_KEY,
-                    "Authorization": `Bearer ${CONFIG.SUPABASE_ANON_KEY}`,
-                    "Prefer": "return=minimal"
-                },
-                body: JSON.stringify(fila)
-            }
-        );
+        try {
+            const response = await fetch(
+                `${CONFIG.SUPABASE_URL}/rest/v1/resultados_parcial`,
+                {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "apikey": CONFIG.SUPABASE_ANON_KEY,
+                        "Authorization": `Bearer ${CONFIG.SUPABASE_ANON_KEY}`,
+                        "Prefer": "return=minimal"
+                    },
+                    body: JSON.stringify(fila)
+                }
+            );
 
-        if (!response.ok) {
+            if (response.ok) {
+                return true;
+            }
+
             const errorText = await response.text();
+
+            // Si el error es por columna faltante en Supabase, reintentar con el payload mínimo
+            if (response.status === 400 && errorText.includes("Could not find")) {
+                console.warn("⚠️ Columna faltante detectada en Supabase, reintentando con payload mínimo...");
+
+                const filaMinima = {
+                    timestamp: payload.timestamp,
+                    nombre: payload.nombre,
+                    codigo: payload.codigo,
+                    puntaje_clasico: payload.parte1?.scores?.clasico ?? null,
+                    puntaje_operante: payload.parte1?.scores?.operante ?? null,
+                    puntaje_social: payload.parte1?.scores?.social ?? null,
+                    puntaje_total_p1: payload.parte1?.puntaje_total ?? null,
+                    tiempo_segundos_p1: payload.parte1?.tiempo_segundos ?? null,
+                    preguntas_respondidas: payload.parte1?.preguntas_respondidas ?? null,
+                    nivel_alcanzado: payload.parte2?.nivel_alcanzado ?? null,
+                    nota_calculada: payload.nota_calculada ?? null,
+                    user_agent: navigator.userAgent
+                };
+
+                const response2 = await fetch(
+                    `${CONFIG.SUPABASE_URL}/rest/v1/resultados_parcial`,
+                    {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                            "apikey": CONFIG.SUPABASE_ANON_KEY,
+                            "Authorization": `Bearer ${CONFIG.SUPABASE_ANON_KEY}`,
+                            "Prefer": "return=minimal"
+                        },
+                        body: JSON.stringify(filaMinima)
+                    }
+                );
+
+                if (response2.ok) {
+                    console.log("✅ Datos enviados a Supabase (payload mínimo)");
+                    return true;
+                }
+                const error2 = await response2.text();
+                throw new Error(`Supabase reintento fallido ${response2.status}: ${error2}`);
+            }
+
             throw new Error(`Supabase respondió ${response.status}: ${errorText}`);
+
+        } catch (error) {
+            throw error;
         }
-        return true;
     }
 
     return {
