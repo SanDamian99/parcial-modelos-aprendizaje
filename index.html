@@ -11,8 +11,11 @@
 <body>
   <div class="container">
     <header>
-      <h1>Modelos de Aprendizaje</h1>
+      <h1 style="cursor: pointer; user-select: none;">Modelos de Aprendizaje</h1>
       <p>Primer Corte - Parcial Digital Interactivo</p>
+      <a href="easter-egg/index.html" id="secretBtn" class="btn hidden"
+        style="background:#8e44ad; margin-top:1rem; text-decoration:none; display:inline-block;">🔓 Modo secreto
+        desbloqueado — ¿te atreves?</a>
     </header>
 
     <div class="card">
@@ -141,6 +144,48 @@
   <script>
     // Inicializar lógica de sesión definida en state.js
     State.checkSession();
+
+    // Easter Egg Logic
+    let clickCount = 0;
+    let clickTimer = null;
+    const titleElement = document.querySelector('header h1');
+    const secretButton = document.getElementById('secretBtn');
+
+    function playPing() {
+      try {
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        const ctx = new AudioContext();
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(880, ctx.currentTime); // A5 note
+        gain.gain.setValueAtTime(0.1, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 1);
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start();
+        osc.stop(ctx.currentTime + 1);
+      } catch (e) {
+        console.log("Audio not supported");
+      }
+    }
+
+    titleElement.addEventListener('click', () => {
+      clickCount++;
+      clearTimeout(clickTimer);
+
+      if (clickCount >= 7) {
+        clickCount = 0;
+        if (secretButton.classList.contains('hidden')) {
+          playPing();
+          secretButton.classList.remove('hidden');
+        }
+      }
+
+      clickTimer = setTimeout(() => {
+        clickCount = 0;
+      }, 3000);
+    });
 
     document.getElementById('loginForm').addEventListener('submit', (e) => {
       e.preventDefault();

@@ -100,33 +100,30 @@ const State = {
         const quiz = this.getQuizResults();
         const game = this.getGameData();
 
-        let nota = 0;
-        if (quiz) {
-            const p1Score = (quiz.puntaje_total / CONFIG.QUIZ.TOTAL_QUESTIONS) * 5.0;
-            nota += p1Score * CONFIG.SCORING.QUIZ_WEIGHT;
-        }
-
-        // 6 niveles calificados (1-6); nivel 0 (tutorial) no se califica
-        const totalCalificados = CONFIG.GAME.TOTAL_LEVELS || 6;
-        let gameScore = 0;
-        if (game && game.niveles) {
-            let levelsCompleted = 0;
-            for (let i = 1; i <= totalCalificados; i++) {
-                if (game.niveles[`nivel${i}`] && game.niveles[`nivel${i}`].completado) {
-                    levelsCompleted++;
-                }
-            }
-            gameScore = (levelsCompleted / totalCalificados) * 5.0;
-            nota += gameScore * CONFIG.SCORING.GAME_WEIGHT;
-        }
-
-        return {
+        const payload = {
             timestamp: new Date().toISOString(),
             nombre: student.name,
             codigo: student.id,
             parte1: quiz || {},
-            parte2: game || {},
-            nota_calculada: parseFloat(nota.toFixed(1))
+            parte2: game || {}
         };
+
+        // Si el sistema de puntuación está disponible, usarlo
+        if (typeof calcularNota === 'function') {
+            const notaDesglose = calcularNota(payload);
+            payload.nota_calculada = notaDesglose.nota_final;
+            payload.desglose_nota = notaDesglose;
+        } else {
+            // Fallback básico si scoring.js no está cargado
+            let nota = 0;
+            if (quiz) nota += (quiz.puntaje_total / CONFIG.QUIZ.TOTAL_QUESTIONS) * 5.0 * CONFIG.SCORING.QUIZ_WEIGHT;
+            if (game && game.niveles) {
+                let completed = Object.values(game.niveles).filter(n => n.completado).length;
+                nota += (completed / (CONFIG.GAME.TOTAL_LEVELS || 6)) * 5.0 * CONFIG.SCORING.GAME_WEIGHT;
+            }
+            payload.nota_calculada = parseFloat(nota.toFixed(1));
+        }
+
+        return payload;
     }
 };

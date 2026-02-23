@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>¿Qué tipo de psicólogo eres?</title>
+    <style>
+        :root {
+            --primary: #2c3e50;
+            --accent: #e74c3c;
+            --bg: #f8f9fa;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg);
+            color: #333;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 2rem;
+        }
+
+        .container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            padding: 3rem;
+            max-width: 600px;
+            width: 100%;
+            text-align: center;
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        h1 {
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .subtitle {
+            color: #666;
+            margin-bottom: 2rem;
+        }
+
+        .question-container {
+            display: none;
+        }
+
+        .question-container.active {
+            display: block;
+            animation: fadeIn 0.4s;
+        }
+
+        .question-text {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            color: var(--primary);
+        }
+
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .option-btn {
+            background: #f1f5f9;
+            border: 2px solid #e2e8f0;
+            padding: 1rem;
+            border-radius: 8px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-align: left;
+        }
+
+        .option-btn:hover {
+            border-color: var(--primary);
+            background: #e2e8f0;
+            transform: translateX(5px);
+        }
+
+        .result-container {
+            display: none;
+            text-align: center;
+        }
+
+        .result-container.active {
+            display: block;
+            animation: fadeIn 0.6s;
+        }
+
+        .result-icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+        }
+
+        .result-title {
+            color: var(--accent);
+            margin-bottom: 1rem;
+        }
+
+        .result-text {
+            line-height: 1.6;
+            font-size: 1.1rem;
+            margin-bottom: 2rem;
+            text-align: left;
+        }
+
+        .btn-home {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            transition: background 0.2s;
+        }
+
+        .btn-home:hover {
+            background: #1a252f;
+        }
+
+        #progress {
+            margin-bottom: 2rem;
+            color: #888;
+            font-weight: bold;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <div id="intro" class="active">
+            <h1>Modo Secreto Desbloqueado</h1>
+            <p class="subtitle">Test de Personalidad: ¿Qué tipo de psicólogo eres realmente?</p>
+            <button class="btn-home" onclick="startTest()">Comenzar el Test</button>
+        </div>
+
+        <div id="test-area" style="display: none;">
+            <div id="progress">Pregunta 1 / 6</div>
+            <div id="q1" class="question-container">
+                <div class="question-text">1. Un estudiante llega llorando a tu consulta. ¿Qué haces?</div>
+                <div class="options">
+                    <button class="option-btn" onclick="answer('freud')">🛋️ Le preguntas por su madre.</button>
+                    <button class="option-btn" onclick="answer('pavlov')">🔔 Tocas una campana cada vez que llora para
+                        ver qué pasa.</button>
+                    <button class="option-btn" onclick="answer('skinner')">⭐ Le das una estrellita dorada si deja de
+                        llorar.</button>
+                    <button class="option-btn" onclick="answer('bandura')">👀 Lo sientas al lado de alguien muy
+                        tranquilo.</button>
+                </div>
+            </div>
+            <div id="q2" class="question-container">
+                <div class="question-text">2. Tu jefe te pide un informe para ayer. ¿Cuál es tu respuesta interna?</div>
+                <div class="options">
+                    <button class="option-btn" onclick="answer('freud')">😤 Esto claramente viene de una herida de
+                        infancia suya.</button>
+                    <button class="option-btn" onclick="answer('pavlov')">🧪 Interesante estímulo aversivo. Tomo
+                        nota.</button>
+                    <button class="option-btn" onclick="answer('skinner')">📊 ¿Qué reforzador me ofreces a
+                        cambio?</button>
+                    <button class="option-btn" onclick="answer('bandura')">😌 Voy a observar cómo lo maneja mi colega
+                        primero.</button>
+                </div>
+            </div>
+            <div id="q3" class="question-container">
+                <div class="question-text">3. ¿Cómo describes tu método de trabajo?</div>
+                <div class="options">
+                    <button class="option-btn" onclick="answer('freud')">🌀 Profundo, oscuro, lleno de
+                        simbolismo.</button>
+                    <button class="option-btn" onclick="answer('pavlov')">⏱️ Metódico, repetitivo, basado en datos
+                        fisiológicos.</button>
+                    <button class="option-btn" onclick="answer('skinner')">🎯 Concreto, medible, orientado a
+                        resultados.</button>
+                    <button class="option-btn" onclick="answer('bandura')">🤝 Colaborativo, aprendo observando a
+                        otros.</button>
+                </div>
+            </div>
+            <div id="q4" class="question-container">
+                <div class="question-text">4. Tu paciente dice que sueña con una serpiente gigante. ¿Qué piensas?</div>
+                <div class="options">
+                    <button class="option-btn" onclick="answer('freud')">😏 Obvio. No necesito decir más.</button>
+                    <button class="option-btn" onclick="answer('pavlov')">🐍 ¿Le genera respuesta fisiológica la
+                        imagen?</button>
+                    <button class="option-btn" onclick="answer('skinner')">🤔 ¿Qué conducta está reforzando ese
+                        sueño?</button>
+                    <button class="option-btn" onclick="answer('bandura')">📺 ¿Dónde aprendió a tenerle miedo a las
+                        serpientes?</button>
+                </div>
+            </div>
+            <div id="q5" class="question-container">
+                <div class="question-text">5. ¿Cuál sería tu frase motivacional favorita?</div>
+                <div class="options">
+                    <button class="option-btn" onclick="answer('freud')">💭 'Todo lo que reprimes, vuelve
+                        disfrazado.'</button>
+                    <button class="option-btn" onclick="answer('pavlov')">🔬 'La conducta es la respuesta a un estímulo
+                        medible.'</button>
+                    <button class="option-btn" onclick="answer('skinner')">🏆 'Refuerza lo que quieres ver
+                        más.'</button>
+                    <button class="option-btn" onclick="answer('bandura')">🌟 'Somos lo que observamos y
+                        practicamos.'</button>
+                </div>
+            </div>
+            <div id="q6" class="question-container">
+                <div class="question-text">6. Describirías tu estilo de vida como...</div>
+                <div class="options">
+                    <button class="option-btn" onclick="answer('freud')">🎭 Lleno de mecanismos de defensa que no
+                        reconozco.</button>
+                    <button class="option-btn" onclick="answer('pavlov')">📋 Estructurado por asociaciones que ni
+                        recuerdo haber aprendido.</button>
+                    <button class="option-btn" onclick="answer('skinner')">🎰 Un sistema de reforzamiento intermitente
+                        variable.</button>
+                    <button class="option-btn" onclick="answer('bandura')">🎬 Una película que escribo observando a los
+                        demás.</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="result" class="result-container">
+            <div id="resIcon" class="result-icon"></div>
+            <h2 id="resTitle" class="result-title"></h2>
+            <div id="resText" class="result-text"></div>
+            <a href="../index.html" class="btn-home">Volver al Parcial</a>
+        </div>
+    </div>
+
+    <script>
+        let currentQ = 1;
+        const scores = { freud: 0, pavlov: 0, skinner: 0, bandura: 0 };
+        const totalQ = 6;
+
+        const RESULTS = {
+            freud: {
+                icon: "🛋️",
+                title: "ERES UN FREUD EN POTENCIA",
+                text: "Ves conflictos inconscientes en el menú del restaurante. Analizas los sueños de tus amigos sin que te lo pidan. Tu superyó probablemente reprobó este parcial, pero tu ello disfrutó cada pregunta.<br><br><strong>Dato curioso:</strong> Freud fumaba 20 cigarros al día y los defendía como 'estímulo neutro'. A veces los cigarros son solo cigarros. A veces."
+            },
+            pavlov: {
+                icon: "🔔",
+                title: "ERES UN PAVLOV PURO",
+                text: "Eres el tipo de persona que nota que saliva cuando suena la alarma del microondas. Tu vida está perfectamente condicionada y ni lo sabías. El laboratorio es tu hábitat natural.<br><br><strong>Dato curioso:</strong> Pavlov ganó el Nobel de Medicina por estudiar la digestión, no la conducta. La psicología lo adoptó sin pedirle permiso."
+            },
+            skinner: {
+                icon: "⭐",
+                title: "ERES UN SKINNER DE CORAZÓN",
+                text: "Llevas mentalmente un registro de reforzadores en cada conversación. Probablemente optimizaste tu rutina matutina con un programa de razón fija. Tu caja de Skinner favorita es tu grupo de WhatsApp.<br><br><strong>Dato curioso:</strong> Skinner diseñó una caja para criar a su hija bebé que generó pánico moral mundial. Ella vivió feliz y se lo agradeció toda la vida."
+            },
+            bandura: {
+                icon: "👀",
+                title: "ERES UN BANDURA MODERNO",
+                text: "Aprendes todo observando a otros y luego lo haces mejor. Tienes alta autoeficacia y probablemente ya sabías el resultado de este test antes de terminarlo. Eres el psicólogo que en vez de intervenir primero, observa.<br><br><strong>Dato curioso:</strong> Bandura llegó accidentalmente a Stanford porque no tenía otra cosa que hacer ese semestre. El aprendizaje social funciona también para las carreras."
+            }
+        };
+
+        function startTest() {
+            document.getElementById('intro').style.display = 'none';
+            document.getElementById('test-area').style.display = 'block';
+            document.getElementById('q1').classList.add('active');
+        }
+
+        function answer(psychologist) {
+            scores[psychologist]++;
+            document.getElementById(`q${currentQ}`).classList.remove('active');
+
+            currentQ++;
+
+            if (currentQ <= totalQ) {
+                document.getElementById('progress').textContent = `Pregunta ${currentQ} / ${totalQ}`;
+                document.getElementById(`q${currentQ}`).classList.add('active');
+            } else {
+                showResult();
+            }
+        }
+
+        function showResult() {
+            document.getElementById('test-area').style.display = 'none';
+            document.getElementById('result').classList.add('active');
+
+            // Find winner
+            let winner = 'freud';
+            let max = scores.freud;
+            ['pavlov', 'skinner', 'bandura'].forEach(p => {
+                if (scores[p] > max) { max = scores[p]; winner = p; }
+            });
+
+            const res = RESULTS[winner];
+            document.getElementById('resIcon').textContent = res.icon;
+            document.getElementById('resTitle').textContent = res.title;
+            document.getElementById('resText').innerHTML = res.text;
+        }
+    </script>
+</body>
+
+</html>

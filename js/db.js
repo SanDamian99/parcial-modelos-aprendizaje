@@ -1,30 +1,8 @@
 // js/db.js
-// Módulo para el envío de resultados a Google Sheets y Supabase en paralelo.
-// Implementa persistencia redundante para asegurar el registro estudiantil.
+// Módulo para el envío de resultados a Supabase.
+// La base de datos principal es Supabase, Google Sheets ha sido retirado.
 
 const DB = (function () {
-
-    /**
-     * Envía los datos a Google Sheets usando Google Apps Script.
-     * REQUIERE mode: "no-cors" y Content-Type: "text/plain".
-     * La respuesta será opaca (normal en no-cors).
-     */
-    async function enviarASheets(payload) {
-        try {
-            await fetch(CONFIG.GOOGLE_SCRIPT_URL, {
-                method: "POST",
-                mode: "no-cors",
-                headers: {
-                    "Content-Type": "text/plain"
-                },
-                body: JSON.stringify(payload)
-            });
-            return true;
-        } catch (error) {
-            console.error("❌ Error en envío a Google Sheets:", error);
-            throw error;
-        }
-    }
 
     /**
      * Envía los datos a Supabase mediante la API REST (PostgREST).
@@ -69,6 +47,7 @@ const DB = (function () {
             nivel4_intervencion: payload.parte2?.respuestas_abiertas?.nivel4_intervencion ?? null,
             nivel4_contraproducente: payload.parte2?.respuestas_abiertas?.nivel4_contraproducente ?? null,
             nota_calculada: payload.nota_calculada ?? null,
+            desglose_nota: payload.desglose_nota ?? null, // CAMBIO 5: Agregado jsonb desglose_nota
             user_agent: navigator.userAgent,
             duracion_total_segundos: payload.duracion_total_segundos ?? null
         };
@@ -96,7 +75,7 @@ const DB = (function () {
 
     return {
         /**
-         * Envía los datos a ambos sistemas en paralelo.
+         * Envía los datos exclusivamente a Supabase.
          * Falla silenciosamente para el usuario, reportando en consola.
          */
         async sendData(payload) {
@@ -110,23 +89,13 @@ const DB = (function () {
                 return;
             }
 
-            console.log("🚀 Iniciando envío redundante de resultados...");
+            console.log("🚀 Iniciando envío de resultados a Supabase...");
 
-            const resultados = await Promise.allSettled([
-                enviarASheets(payloadSeguro),
-                enviarASupabase(payloadSeguro)
-            ]);
-
-            if (resultados[0].status === "fulfilled") {
-                console.log("✅ Datos enviados a Google Sheets");
-            } else {
-                console.warn("⚠️ Google Sheets falló, pero Supabase podría compensar.");
-            }
-
-            if (resultados[1].status === "fulfilled") {
+            try {
+                await enviarASupabase(payloadSeguro);
                 console.log("✅ Datos enviados a Supabase");
-            } else {
-                console.error("❌ Error fatal en Supabase:", resultados[1].reason);
+            } catch (err) {
+                console.error("❌ Error Supabase:", err);
             }
         }
     };

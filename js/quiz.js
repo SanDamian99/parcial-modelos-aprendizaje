@@ -194,10 +194,11 @@ function handleAnswer(selectedOpt, btnElement, q) {
     if (!isCorrect) {
         btnElement.classList.add('incorrect');
         feedbackContainer.className = 'feedback incorrect';
-        feedbackContainer.innerHTML = `<strong>Incorrecto.</strong><br/>${q.explanation}`;
+        feedbackContainer.innerHTML = q.explanation;
     } else {
+        btnElement.classList.add('correct');
         feedbackContainer.className = 'feedback correct';
-        feedbackContainer.innerHTML = `<strong>¡Correcto!</strong><br/>${q.explanation}`;
+        feedbackContainer.innerHTML = `<strong>✅ ¡Excelente!</strong><br/>Has identificado correctamente el principio psicológico aplicado en este caso.`;
         scores[q.topic]++;
     }
     feedbackContainer.classList.remove('hidden');

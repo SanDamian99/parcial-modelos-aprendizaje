@@ -413,8 +413,9 @@ function renderTrainingTurn(data) {
         <h4>Turno ${turn.turno} de 5 — ${turn.concepto}</h4>
         <p style="font-style:italic;margin-bottom:1rem">${turn.situacion}</p>
         <div class="options-grid">`;
-    turn.opciones.forEach((opt, i) => {
-        h += `<button class="option-btn bruno-opt" data-idx="${i}">${opt}</button>`;
+    let indices = turn.opciones.map((_, i) => i).sort(() => Math.random() - 0.5);
+    indices.forEach(i => {
+        h += `<button class="option-btn bruno-opt" data-idx="${i}">${turn.opciones[i]}</button>`;
     });
     h += `</div></div></div><div id="brunoFeedback"></div>`;
     levelWorkspace.innerHTML = h;
@@ -622,13 +623,13 @@ function validateCurrentLevel() {
         if (!d || !inter) { isCorrect = false; errorMsg = "Selecciona diagnóstico e intervención."; }
         else {
             if (d !== data.diagnosis_correct) isCorrect = false; if (inter !== data.intervention_correct) isCorrect = false; document.querySelectorAll('.target-box[data-expected]').forEach(b => { if (!b.firstChild || b.firstChild.textContent !== b.getAttribute('data-expected')) isCorrect = false; });
-            if (!isCorrect) errorMsg = '<strong>Diagnóstico Fallido.</strong> Es Condicionamiento Clásico (Pavlov). Intervención: Desensibilización Sistemática (Wolpe, 1958).';
+            if (!isCorrect) errorMsg = data.socratic_feedback;
         }
     }
     else if (data.type === 'timeline_operante') {
         const f1 = document.getElementById('fase1').value, f2 = document.getElementById('fase2').value, q = document.getElementById('lvl2_q').value, m = document.getElementById('lvl2_m').value;
         if (!f1 || !f2 || !q || !m) { isCorrect = false; errorMsg = "Completa todos los campos."; }
-        else if (f1 !== data.phases[0].correct || f2 !== data.phases[1].correct || q !== data.question_options[data.question_correct] || m !== data.maintenance_options[data.maintenance_correct]) { isCorrect = false; errorMsg = '<strong>Incorrecto.</strong> Fase 1: Extinción. Fase 2: Reforzamiento Positivo. Mantenimiento: Razón Variable.'; }
+        else if (f1 !== data.phases[0].correct || f2 !== data.phases[1].correct || q !== data.question_options[data.question_correct] || m !== data.maintenance_options[data.maintenance_correct]) { isCorrect = false; errorMsg = data.socratic_feedback; }
     }
     else if (data.type === 'bandura_sequence') {
         const q = document.getElementById('lvl3_q').value;
@@ -638,7 +639,7 @@ function validateCurrentLevel() {
         let seq = []; drops.forEach(d => { if (d.firstChild) seq.push(d.firstChild.textContent); });
         if (seq.length !== data.correct_sequence.length) { isCorrect = false; errorMsg = "Arrastra las 8 tarjetas."; }
         else if (seq.join(',') !== data.correct_sequence.join(',')) isCorrect = false;
-        if (!isCorrect && seq.length === data.correct_sequence.length) errorMsg = '<strong>Secuencia Incorrecta.</strong> Orden correcto: Modelo → Observador → Atención → Retención → Reproducción → Motivación → Refuerzo Vicario → Autoeficacia.';
+        if (!isCorrect && seq.length === data.correct_sequence.length) errorMsg = data.socratic_feedback;
 
         // Run animation regardless (shows correct vs incorrect)
         if (seq.length === data.correct_sequence.length && data.animation_steps) {
@@ -652,7 +653,7 @@ function validateCurrentLevel() {
         const t1 = document.getElementById('lvl4_open1').value.trim(), t2 = document.getElementById('lvl4_open2').value.trim();
         if (!t1 || t1.length < 30 || !t2 || t2.length < 30) ok = false;
         if (!ok) { isCorrect = false; errorMsg = "Completa todas las listas y textos (mín 30 caracteres)."; }
-        else if (!isCorrect) errorMsg = '<strong>Clasificación Incorrecta.</strong> Exámenes sorpresa=Operante/IV. Ranking=Social/Incentivo Vicario. Recreos=Operante/Castigo Negativo. Charlas=Social/Modelamiento.';
+        else if (!isCorrect) errorMsg = data.socratic_feedback;
         else State.saveGameOpenAnswers({ nivel4_contraproducente: t1, nivel4_intervencion: t2 });
     }
 
@@ -697,8 +698,44 @@ async function finishGame() {
     levelTitle.textContent = "Parcial Finalizado";
     gameSummary.classList.remove('hidden');
     const gd = State.getGameData();
-    document.getElementById('maxLevelDisplay').textContent = gd.nivel_alcanzado || 0;
-    await DB.sendData(State.buildFinalPayload());
+
+    let payload = State.buildFinalPayload();
+
+    if (typeof calcularNota === 'function') {
+        const nota = calcularNota(payload);
+        payload.desglose_nota = nota;
+
+        gameSummary.innerHTML = `
+            <h2 style="color:var(--primary); margin-bottom:1rem;">¡Has completado el Parcial Clínico!</h2>
+            <p style="margin-bottom:1.5rem; color:#555">Tus respuestas y decisiones terapéuticas han sido procesadas por el sistema.</p>
+            <div class="score-details" style="text-align:left; max-width:600px; margin: 0 auto; background:#f8fafc; padding:2rem; border-radius:12px; box-shadow:0 4px 15px rgba(0,0,0,0.05); border:1px solid #e2e8f0;">
+                <div style="display:flex; justify-content:space-between; margin-bottom:0.8rem; font-size:1.1rem;">
+                    <span>Parte 1 (Quiz Teórico):</span>
+                    <strong>${nota.nota_p1.toFixed(1)} / ${(SCORING.quiz.peso_total * 5).toFixed(1)}</strong>
+                </div>
+                <div style="display:flex; justify-content:space-between; margin-bottom:1.5rem; font-size:1.1rem;">
+                    <span>Parte 2 (Juego Práctico):</span>
+                    <strong>${nota.nota_p2.toFixed(1)} / ${(SCORING.juego.peso_total * 5).toFixed(1)}</strong>
+                </div>
+                
+                <div style="text-align:center; padding:1.5rem 0; border-top:2px solid #e2e8f0; border-bottom:2px solid #e2e8f0; margin-bottom:1.5rem;">
+                    <span style="font-size:1.2rem; display:block; margin-bottom:0.5rem; color:#64748b;">Calificación Final</span>
+                    <strong style="font-size:3rem; color: ${nota.nota_final >= 3.0 ? 'var(--success)' : 'var(--danger)'};">${nota.nota_final.toFixed(1)}</strong>
+                    <span style="font-size:1.5rem; color:#94a3b8;">/ 5.0</span>
+                </div>
+
+                <div style="margin-top:1rem">
+                    <p style="color:var(--success); margin-bottom:0.5rem;"><strong style="display:inline-block; width:130px;">🌟 Fortalezas:</strong> ${nota.fortalezas.join(', ')}</p>
+                    <p style="color:var(--danger); margin-bottom:0.5rem;"><strong style="display:inline-block; width:130px;">📈 Para Reforzar:</strong> ${nota.para_reforzar.join(', ')}</p>
+                </div>
+            </div>
+            <button class="btn mt-2" style="margin-top:2rem;" onclick="window.location.href='../index.html'">Volver a la Pantalla de Inicio</button>
+        `;
+    } else {
+        document.getElementById('maxLevelDisplay').textContent = gd.nivel_alcanzado || 0;
+    }
+
+    await DB.sendData(payload);
 }
 
 window.addEventListener('DOMContentLoaded', initGame);

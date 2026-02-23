@@ -47,7 +47,8 @@ const GAME_CASES = [
             "Llorar al ver al dentista": "RC"
         },
         intervention_options: ["Desensibilización sistemática", "Extinción", "Castigo positivo"],
-        intervention_correct: "Desensibilización sistemática"
+        intervention_correct: "Desensibilización sistemática",
+        socratic_feedback: "❌ Diagnóstico Fallido.\\n💡 Piensa: ¿El miedo de María fue natural o aprendido tras escuchar el taladro junto con el dolor (el cual es incondicionado)? ¿Qué técnica de Wolpe reduce la ansiedad asociando calma con el estímulo temido?"
     },
 
     // ═══════════════════════════════════════
@@ -87,7 +88,8 @@ const GAME_CASES = [
             "Programa de Intervalo Fijo (Reconocimiento cada viernes)",
             "Refuerzo Continuo permanente"
         ],
-        maintenance_correct: 0
+        maintenance_correct: 0,
+        socratic_feedback: "❌ Análisis Operante Incorrecto.\\n💡 Piensa: En la Fase 1, la conducta cambia porque desaparece toda consecuencia. En la Fase 2, se 'añadió' reconocimiento (positivo) para aumentar la puntualidad. Para mantener una conducta a largo plazo sin que se extinga, ¿es mejor ser predecible o impredecible (variable)?"
     },
 
     // ═══════════════════════════════════════
@@ -118,7 +120,8 @@ const GAME_CASES = [
             "Habría tenido más facilidad para imitar a su amiga.",
             "Habría suprimido el refuerzo vicario completamente."
         ],
-        question_correct: 0
+        question_correct: 0,
+        socratic_feedback: "❌ Secuencia o respuesta incorrecta.\\n💡 Observa el flujo de Bandura: Para imitar a alguien (Modelo), primero debes ser un Observador. Luego le prestas Atención y lo guardas en tu mente (Retención). Después verificas si sabes hacerlo físicamente (Reproducción). Al ver que el modelo obtuvo un beneficio (Refuerzo Vicario) encuentras la Motivación, y todo cierra si crees en ti mismo (Autoeficacia). Revisa el orden y tu respuesta."
     },
 
     // ═══════════════════════════════════════
@@ -171,7 +174,8 @@ const GAME_CASES = [
             "Extinción inmediata del estudio.",
             "Resignación aprendida en todos los estudiantes."
         ],
-        predict_correct: 0
+        predict_correct: 0,
+        socratic_feedback: "❌ Clasificación o predicción fallida.\\n💡 Analiza caso por caso: Si no sabes CUÁNDO habrá examen (predecibilidad de tiempo), es Variable. Mostrar el éxito de otros para motivar apela al aspecto Social (Incentivo). Si retiras el recreo (algo agradable), estás restando (-). Inténtalo de nuevo."
     },
 
     // ═══════════════════════════════════════
@@ -202,7 +206,7 @@ const GAME_CASES = [
                 mini_caso: "Tomás escucha el timbre de la escuela (EC) y siente náuseas (RC). ¿Cuál fue el Estímulo Incondicionado que originó esta respuesta?",
                 opciones: ["El regaño del profesor", "Las náuseas espontáneas", "El timbre escolar", "El recreo"],
                 correcta: 0,
-                explicacion: "El regaño del profesor (EI) causaba malestar natural (RI). Al asociarse con el timbre (EN→EC), el timbre solo ahora produce náuseas (RC).",
+                explicacion: "❌ Incorrecto.\\n💡 Piensa: El timbre solo es el estímulo condicionado (EC) que causa ansiedad (RC) AHORA. Pero, ¿qué evento natural generaba el displacer antes del aprendizaje? El regaño causaba malestar por sí mismo.",
                 concepto: "EI en condicionamiento clásico"
             },
             {
@@ -210,7 +214,7 @@ const GAME_CASES = [
                 mini_caso: "Tomás sudaba cada vez que un profesor gritaba. Ahora también suda cuando cualquier adulto levanta la voz. ¿Qué fenómeno describe esto?",
                 opciones: ["Generalización", "Discriminación", "Extinción", "Adquisición"],
                 correcta: 0,
-                explicacion: "La generalización ocurre cuando estímulos similares al EC (adultos levantando la voz) evocan la misma RC (sudoración). Tomás no discrimina entre profesores y otros adultos.",
+                explicacion: "❌ Incorrecto.\\n💡 Piensa: Si Tomás está respondiendo igual a estímulos que se parecen (cualquier adulto vs el profesor), significa que no logra separar ambos conceptos.",
                 concepto: "Generalización del estímulo"
             },
             {
@@ -218,7 +222,7 @@ const GAME_CASES = [
                 mini_caso: "El profesor de arte de Tomás era amable y nunca gritaba. Tomás no sentía miedo en clase de arte, aunque sí en las demás. ¿Qué fenómeno se evidencia?",
                 opciones: ["Discriminación", "Generalización", "Recuperación espontánea", "Adquisición"],
                 correcta: 0,
-                explicacion: "La discriminación permite responder de forma diferente según el estímulo. Tomás distingue entre el contexto amenazante (otras clases) y el seguro (arte).",
+                explicacion: "❌ Incorrecto.\\n💡 Piensa: A diferencia de la puerta anterior, Tomás sí distingue entre un estímulo seguro (arte) y uno amenazante (otras clases).",
                 concepto: "Discriminación de estímulos"
             },
             {
@@ -226,7 +230,7 @@ const GAME_CASES = [
                 mini_caso: "Tomás dejó de ir a la escuela por un mes. Cuando regresó, al escuchar el timbre, sintió náuseas otra vez. ¿Qué fenómeno es este?",
                 opciones: ["Recuperación espontánea", "Generalización", "Adquisición nueva", "Sensibilización"],
                 correcta: 0,
-                explicacion: "La recuperación espontánea es la reaparición de la RC tras un período de descanso posterior a la extinción parcial. La asociación EC-EI no se eliminó completamente.",
+                explicacion: "❌ Incorrecto.\\n💡 Piensa: El miedo había bajado, pero tras un largo descanso y volver al contexto, la respuesta 'brotó' nuevamente de repente por sí sola sin un nuevo trauma.",
                 concepto: "Recuperación espontánea"
             },
             {
@@ -234,7 +238,7 @@ const GAME_CASES = [
                 mini_caso: "El terapeuta expone gradualmente a Tomás: primero fotos del colegio, luego videos, luego visitas cortas sin clases. ¿Qué técnica usa?",
                 opciones: ["Desensibilización Sistemática", "Contracondicionamiento", "Extinción abrupta", "Castigo"],
                 correcta: 0,
-                explicacion: "La desensibilización sistemática presenta el EC (colegio) en aproximaciones graduales mientras se mantiene relajación, debilitando la RC (miedo) progresivamente.",
+                explicacion: "❌ Incorrecto.\\n💡 Piensa: El terapeuta no usa un susto repentino (abrupto) ni le enseña una emoción opuesta con helados. Va paso a pasito reduciendo la sensibilidad al estímulo.",
                 concepto: "Desensibilización sistemática"
             },
             {
@@ -242,7 +246,7 @@ const GAME_CASES = [
                 mini_caso: "El terapeuta enseña a Tomás técnicas de relajación y las aplica mientras imagina estar en el colegio. El miedo disminuye. ¿Qué principio aplica?",
                 opciones: ["Inhibición recíproca", "Reforzamiento Positivo", "Extinción operante", "Castigo Negativo"],
                 correcta: 0,
-                explicacion: "La inhibición recíproca (Wolpe) sostiene que no se puede sentir ansiedad y relajación al mismo tiempo. Asociar relajación con el EC debilita la RC de miedo.",
+                explicacion: "❌ Incorrecto.\\n💡 Piensa: Wolpe dijo que biológicamente no puedes estar relajado y aterrorizado al mismo tiempo. Un estado frena (inhibe) al otro.",
                 concepto: "Inhibición recíproca"
             },
             {
@@ -250,7 +254,7 @@ const GAME_CASES = [
                 mini_caso: "Tras varias sesiones, Tomás escucha el timbre del colegio y ya no siente náuseas. ¿Qué proceso se completó?",
                 opciones: ["Extinción", "Habituación", "Sensibilización", "Contracondicionamiento"],
                 correcta: 0,
-                explicacion: "La extinción clásica se produjo al presentar repetidamente el EC (timbre) sin el EI (regaños), hasta que la RC (náuseas) desapareció.",
+                explicacion: "❌ Incorrecto.\\n💡 Piensa: Cuando escuchas el EC (timbre) muchas veces, pero ya nunca llega el EI (regaños), la curva de ansiedad simplemente se agota y desaparece.",
                 concepto: "Extinción clásica"
             },
             {
@@ -258,7 +262,7 @@ const GAME_CASES = [
                 mini_caso: "Tomás ahora juega feliz en el recreo. Los otros niños que antes lo evitaban empiezan a acercarse. Su sonrisa al escuchar el timbre refleja:",
                 opciones: ["Contracondicionamiento exitoso", "Generalización inversa", "Castigo Positivo", "Reforzamiento Diferencial"],
                 correcta: 0,
-                explicacion: "El contracondicionamiento reemplazó la respuesta condicionada negativa (miedo) por una positiva (alegría) ante el mismo EC (timbre). Tomás ahora asocia el timbre con experiencias positivas.",
+                explicacion: "❌ Incorrecto.\\n💡 Piensa: No solo se eliminó el miedo (extinción), sino que ahora asocia el mismo viejo estímulo con una emoción completamente nueva y opuesta (alegría contra el miedo).",
                 concepto: "Contracondicionamiento"
             },
             // Puertas más fáciles (rutas alternativas)
@@ -267,7 +271,7 @@ const GAME_CASES = [
                 mini_caso: "Un sonido fuerte hace que Tomás salte de su silla. ¿Este salto es una respuesta...?",
                 opciones: ["Incondicionada", "Condicionada", "Operante", "Voluntaria"],
                 correcta: 0,
-                explicacion: "El sobresalto ante un ruido fuerte es una Respuesta Incondicionada (RI): ocurre naturalmente sin aprendizaje previo.",
+                explicacion: "❌ Incorrecto.\\n💡 Piensa: Si nunca tuvo que aprenderlo y su biología reaccionó por puro reflejo defensivo, ¿es una reacción adquirida o innata?",
                 concepto: "Respuesta Incondicionada"
             },
             {
@@ -275,7 +279,7 @@ const GAME_CASES = [
                 mini_caso: "Un estímulo que originalmente no causaba ninguna respuesta emocional se llama:",
                 opciones: ["Estímulo Neutro", "Estímulo Condicionado", "Estímulo Incondicionado", "Respuesta Condicionada"],
                 correcta: 0,
-                explicacion: "Un Estímulo Neutro (EN) es aquel que no produce la respuesta de interés antes del condicionamiento. Al asociarse con un EI, se convierte en EC.",
+                explicacion: "❌ Incorrecto.\\n💡 Piensa: Antes de que el perro aprenda a salivar, escuchar una campana no significa nada para él.",
                 concepto: "Estímulo Neutro"
             }
         ]
@@ -293,108 +297,108 @@ const GAME_CASES = [
         turnos: [
             {
                 turno: 1,
-                situacion: "Bruno está en la sala de entrenamiento. Quieres que asocie el olor a pólvora con la acción de sentarse y esperar.",
-                concepto: "Reforzamiento Positivo",
+                situacion: "Bruno inicia su entrenamiento. El olor a explosivo (C4) no le significa nada (es ignorado). Quieres que el olor a C4 provoque en él una reacción automática de alerta (salivación/excitación). ¿Cómo procedes según Pavlov?",
+                concepto: "Adquisición (Condicionamiento Clásico)",
                 opciones: [
-                    "A) Presentar el olor a pólvora y darle comida inmediatamente si se sienta.",
-                    "B) Aplicar un sonido molesto que cesa cuando Bruno se sienta ante el olor.",
-                    "C) Ignorar completamente a Bruno durante la sesión.",
-                    "D) Gritar \"NO\" fuerte cada vez que Bruno no reacciona al olor."
+                    "A) Toco un clicker y le doy una galleta cada vez que mira el C4 accidentalmente.",
+                    "B) Presento el olor a C4 e inmediatamente después presento su pelota favorita, repitiendo el proceso.",
+                    "C) Le grito fuerte cuando huele el C4 para que le tenga miedo.",
+                    "D) Escondo el C4 en el campo y espero a que lo encuentre naturalmente."
                 ],
-                correcta: 0,
-                suboptima: 1,
+                correcta: 1,
+                suboptima: 0,
                 consecuencias: {
-                    correcta: { aprendizaje: 20, bienestar: -5 },
-                    suboptima: { aprendizaje: 10, bienestar: -15 },
-                    incorrecta: { aprendizaje: 0, bienestar: -25 }
+                    correcta: { aprendizaje: 20, bienestar: 5 },
+                    suboptima: { aprendizaje: 10, bienestar: 0 },
+                    incorrecta: { aprendizaje: 0, bienestar: -15 }
                 },
-                explicacion_correcta: "Reforzamiento Positivo (Skinner): añadir un estímulo agradable (comida) inmediatamente después de la conducta deseada (sentarse ante el olor) fortalece esa conducta. Es la técnica más efectiva y ética para el entrenamiento animal.",
-                explicacion_suboptima: "Reforzamiento Negativo (retirar el sonido molesto) funciona, pero genera estrés en el animal, reduciendo su bienestar y eficacia a largo plazo.",
-                explicacion_incorrecta: "Ignorar al perro (Extinción) no enseña conductas nuevas, y gritar (Castigo Positivo) genera miedo y aversión al entrenamiento."
+                explicacion_correcta: "Correcto. El olor a C4 (EN) se presenta seguido de la pelota (EI que genera excitación RI). Tras repeticiones, el C4 se volverá un EC que genera excitación (RC).",
+                explicacion_suboptima: "Eso es condicionamiento operante (moldear una conducta voluntaria). En esta fase buscamos crear un reflejo condicionado involuntario al olor.",
+                explicacion_incorrecta: "Gritarle (EI aversivo) asociará el olor con miedo/terror, y huirá del C4 en lugar de alertar excitado al humano."
             },
             {
                 turno: 2,
-                situacion: "Bruno ha aprendido a sentarse ante el olor a pólvora. Ahora también se sienta ante perfume, gasolina y otros olores fuertes. Necesitas que distinga solo la pólvora.",
-                concepto: "Discriminación del estímulo",
+                situacion: "Bruno aprendió a reaccionar excitado al olor del C4. Sin embargo, descubres que ahora también se excita automáticamente cuando huele pólvora blanca de fuegos artificiales (inofensiva pero de olor similar).",
+                concepto: "Generalización del Estímulo",
                 opciones: [
-                    "A) Reforzar SOLO cuando se sienta ante pólvora. No reforzar ante otros olores.",
-                    "B) Castigar a Bruno cada vez que se sienta ante un olor incorrecto.",
-                    "C) Presentar únicamente pólvora y eliminar los demás olores del entrenamiento.",
-                    "D) Aumentar la cantidad de comida por cada respuesta, sin importar el olor."
-                ],
-                correcta: 0,
-                suboptima: 2,
-                consecuencias: {
-                    correcta: { aprendizaje: 20, bienestar: -5 },
-                    suboptima: { aprendizaje: 10, bienestar: -15 },
-                    incorrecta: { aprendizaje: 0, bienestar: -25 }
-                },
-                explicacion_correcta: "El entrenamiento en discriminación refuerza la respuesta ante el estímulo correcto (pólvora) y la extingue ante los incorrectos. Bruno aprende: 'solo la pólvora produce recompensa'.",
-                explicacion_suboptima: "Eliminar otros olores no enseña a discriminar — en el campo real habrá múltiples olores. Bruno necesita aprender a diferenciar activamente.",
-                explicacion_incorrecta: "Castigar ante olores incorrectos genera inhibición generalizada: Bruno puede dejar de reaccionar ante TODOS los olores, incluyendo la pólvora."
-            },
-            {
-                turno: 3,
-                situacion: "Bruno ya discrimina la pólvora. Ahora necesitas que también detecte C4 y TNT, que tienen olores ligeramente diferentes.",
-                concepto: "Generalización controlada",
-                opciones: [
-                    "A) Presentar pólvora, C4 y TNT en sesiones alternas, reforzando la misma respuesta ante los tres.",
-                    "B) Mezclar los tres olores en uno solo para que Bruno solo aprenda una respuesta.",
-                    "C) Entrenar cada olor en un lugar diferente para que los asocie con el contexto.",
-                    "D) Presentar solo pólvora y esperar que Bruno generalice naturalmente."
-                ],
-                correcta: 0,
-                suboptima: 3,
-                consecuencias: {
-                    correcta: { aprendizaje: 20, bienestar: -5 },
-                    suboptima: { aprendizaje: 10, bienestar: -15 },
-                    incorrecta: { aprendizaje: 0, bienestar: -25 }
-                },
-                explicacion_correcta: "La generalización controlada presenta estímulos similares y refuerza la misma respuesta ante todos ellos. Bruno aprende que pólvora, C4 y TNT comparten una categoría: 'explosivo = sentarse'.",
-                explicacion_suboptima: "La generalización natural es impredecible y poco fiable. En un entorno de alto riesgo, no puedes confiar en que Bruno detecte TNT sin haberlo entrenado específicamente.",
-                explicacion_incorrecta: "Mezclar olores impide la discriminación y asociar con contexto genera respuestas ligadas al lugar, no al olor."
-            },
-            {
-                turno: 4,
-                situacion: "Bruno detecta explosivos al 90%. Pero durante el entrenamiento siempre recibe comida. ¿Cómo garantizas que su conducta se mantenga en el campo sin refuerzo constante?",
-                concepto: "Programa de reforzamiento para mantenimiento",
-                opciones: [
-                    "A) Cambiar a un programa de razón variable: darle comida de forma impredecible, a veces sí y a veces no.",
-                    "B) Seguir con refuerzo continuo: darle comida SIEMPRE que detecte.",
-                    "C) Eliminar la comida completamente y confiar en su entrenamiento.",
-                    "D) Darle comida solo cada 5 detecciones exactas."
-                ],
-                correcta: 0,
-                suboptima: 3,
-                consecuencias: {
-                    correcta: { aprendizaje: 20, bienestar: -5 },
-                    suboptima: { aprendizaje: 10, bienestar: -15 },
-                    incorrecta: { aprendizaje: 0, bienestar: -25 }
-                },
-                explicacion_correcta: "El programa de razón variable produce la conducta más resistente a la extinción (Skinner). Bruno seguirá detectando porque 'quizás esta vez sí reciba comida'. Las máquinas tragamonedas usan el mismo principio.",
-                explicacion_suboptima: "Razón fija (cada 5) genera pausas post-refuerzo: Bruno podría relajarse entre detecciones, cosa inaceptable en un campo minado.",
-                explicacion_incorrecta: "Refuerzo continuo genera extinción rápida al retirarlo. Eliminar la comida directamente provoca extinción inmediata."
-            },
-            {
-                turno: 5,
-                situacion: "Antes de ir al campo, Bruno observa a Rex, un perro experto, detectar explosivos en una simulación. Bruno ve cómo Rex se sienta, recibe felicitaciones y un premio.",
-                concepto: "Modelamiento / Aprendizaje observacional",
-                opciones: [
-                    "A) Dejar que Bruno observe a Rex trabajar y luego intentar la misma tarea — Modelamiento.",
-                    "B) Forzar a Bruno a competir con Rex para motivarlo.",
-                    "C) Aislar a Bruno para que no se distraiga con otros perros.",
-                    "D) Castigar a Bruno cada vez que no imite a Rex inmediatamente."
+                    "A) Es generalización del estímulo. Hay que someterlo a discriminación presentando la pólvora blanca sin la pelota.",
+                    "B) Es extinción. Se ha olvidado del C4 y hay que empezar de nuevo.",
+                    "C) Es recuperación espontánea. El perro recordó traumas viejos.",
+                    "D) Es un castigo negativo porque la pólvora no es peligrosa."
                 ],
                 correcta: 0,
                 suboptima: 1,
                 consecuencias: {
-                    correcta: { aprendizaje: 20, bienestar: -5 },
-                    suboptima: { aprendizaje: 10, bienestar: -15 },
-                    incorrecta: { aprendizaje: 0, bienestar: -25 }
+                    correcta: { aprendizaje: 20, bienestar: 5 },
+                    suboptima: { aprendizaje: 0, bienestar: -5 },
+                    incorrecta: { aprendizaje: -10, bienestar: -10 }
                 },
-                explicacion_correcta: "El modelamiento (Bandura) permite aprender observando a un modelo competente. Bruno ve la conducta de Rex, la retiene y se motiva por el refuerzo vicario (premio a Rex). Es una forma de aprendizaje social que se aplica también en animales sociales.",
-                explicacion_suboptima: "La competencia puede generar estrés, pero Bruno sí observa al modelo. La motivación generada es inferior al aprendizaje tranquilo por observación.",
-                explicacion_incorrecta: "Aislar impide el aprendizaje observacional. Castigar por no imitar inmediatamente ignora que el modelamiento requiere tiempo (atención → retención → reproducción → motivación)."
+                explicacion_correcta: "Correcto. Bruno generalizó a olores químicos similares. La discriminación (presentar pólvora sin pelota, y C4 con pelota) afinará su olfato.",
+                explicacion_suboptima: "No es una pérdida de la respuesta. Al contrario, la respuesta (excitación) se ha expandido a demasiados estímulos similares no deseados.",
+                explicacion_incorrecta: "Los conceptos operantes (castigo) no aplican aquí, pues es una excitación biológica automática desencadenada por el olor."
+            },
+            {
+                turno: 3,
+                situacion: "Durante un mes, Bruno fue expuesto al olor a C4 (EC) repetidas veces en exhibiciones, pero NUNCA se le entregó su pelota favorita (EI). Ahora, Bruno huele C4 y ya no muestra excitación alguna.",
+                concepto: "Extinción Clásica",
+                opciones: [
+                    "A) Se produjo extinción al romper la asociación entre el C4 y la recompensa biológica (pelota).",
+                    "B) Bruno sufrió una habituación sensorial porque su nariz se cansó del olor.",
+                    "C) Es un caso claro de reforzamiento negativo por evitación.",
+                    "D) Sufrió de inhibición recíproca al estar rodeado de gente."
+                ],
+                correcta: 0,
+                suboptima: 1,
+                consecuencias: {
+                    correcta: { aprendizaje: 20, bienestar: 0 },
+                    suboptima: { aprendizaje: 10, bienestar: -5 },
+                    incorrecta: { aprendizaje: -10, bienestar: -15 }
+                },
+                explicacion_correcta: "Exacto. Cuando el EC (olor a C4) se presenta crónicamente sin el EI (pelota), la curva de respuesta condicionada cae hasta cero. Esto se llama extinción clásica.",
+                explicacion_suboptima: "La habituación aplica a estímulos innatos incondicionados, no a respuestas que fueron previamente aprendidas mediante emparejamiento asociativo.",
+                explicacion_incorrecta: "Evitación o refuerzo implican conducta motora para cambiar el ambiente. Aquí es la simple desaparición del reflejo interior de excitación ante un olor."
+            },
+            {
+                turno: 4,
+                situacion: "Has re-condicionado el olor del C4 a la pelota, restableciendo el reflejo. Ahora, haces sonar una campanilla repetidas veces JUSTO ANTES de que Bruno huela el C4. Eventualmente, Bruno se excita solo al escuchar la campanilla.",
+                concepto: "Condicionamiento de Orden Superior",
+                opciones: [
+                    "A) Discriminación de segundo grado, porque distingue la campana del olor.",
+                    "B) Condicionamiento de segundo orden, donde un EC1 (olor) actúa como EI para un nuevo EC2 (campana).",
+                    "C) Generalización inter-modal, transfiriendo del olfato al oído.",
+                    "D) Sensibilización cruzada por exceso de entrenamiento."
+                ],
+                correcta: 1,
+                suboptima: 2,
+                consecuencias: {
+                    correcta: { aprendizaje: 20, bienestar: 0 },
+                    suboptima: { aprendizaje: 10, bienestar: 0 },
+                    incorrecta: { aprendizaje: -10, bienestar: -10 }
+                },
+                explicacion_correcta: "Muy bien. El condicionamiento de orden superior ocurre cuando un estímulo condicionado bien establecido (C4) se usa para condicionar un nuevo estímulo neutro (campanilla).",
+                explicacion_suboptima: "Aunque involucra dos sentidos, el mecanismo que explica la excitación acústica no es generalización pavloviana pura, sino la contigüidad entre un EN y un EC previo.",
+                explicacion_incorrecta: "No hay 'discriminación' en excitarse por ambas cosas, ni la sensibilización explica la asociación directa y cronológica."
+            },
+            {
+                turno: 5,
+                situacion: "Llevas a Bruno a un escenario ruidoso de aeropuerto. El ruido intenso de las turbinas (EI) le da miedo incontrolable (RI). Si se asusta en el aeropuerto, su capacidad olfativa baja. Quieres que el ruido de turbinas le genere relajación.",
+                concepto: "Contracondicionamiento",
+                opciones: [
+                    "A) Le doy descargas eléctricas suaves cada vez que se asusta para detener la conducta ansiosa.",
+                    "B) Asocio gradualmente grabaciones del ruido de turbinas con comida deliciosa y caricias hasta llevarlo a las turbinas reales.",
+                    "C) Lo encierro en la pista de aterrizaje hasta que su miedo se extinga por agotamiento.",
+                    "D) Ignoro su miedo para que se extinga por falta de atención."
+                ],
+                correcta: 1,
+                suboptima: 2,
+                consecuencias: {
+                    correcta: { aprendizaje: 20, bienestar: 10 },
+                    suboptima: { aprendizaje: 0, bienestar: -20 },
+                    incorrecta: { aprendizaje: -20, bienestar: -30 }
+                },
+                explicacion_correcta: "El contracondicionamiento acopla el estímulo que produce pánico con un estímulo intenso que genera relajación/placer (comida). Es la mejor maniobra clínica.",
+                explicacion_suboptima: "Eso se llama 'Inundación' (Flooding). Puede funcionar tras agotamiento extremo, pero empuja el bienestar biológico del animal a mínimos peligrosos (riesgo de colapso emotivo).",
+                explicacion_incorrecta: "Las descargas castigan el miedo creando aún más pánico en bucle. Ignorar el miedo (operante) no frena en nada el terror reflexológico."
             }
         ],
         campo_minado: {

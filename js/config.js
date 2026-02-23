@@ -1,5 +1,4 @@
 const CONFIG = {
-  GOOGLE_SCRIPT_URL: "https://script.google.com/macros/s/AKfycbwipK9OFHxIuR0Hnvdu3BfnajXPRXiAQOuslHl6FZxt-YUUUt1lAgbgjZzWopD0vpxx/exec",
   SUPABASE_URL: "https://bhepikgfebkwhwewyipj.supabase.co",
   SUPABASE_ANON_KEY: "sb_publishable_Q4ws8sczKglY14Ci6fZWHA_AzgDjOxc",
   QUIZ: {
