@@ -10,6 +10,29 @@ let levelStartTime = 0;
 const studentDisplayGame = document.getElementById('studentDisplayGame');
 const levelTitle = document.getElementById('levelTitle');
 const gameTimer = document.getElementById('gameTimer');
+
+// Funciones Auxiliares
+function hashCode(str) {
+    let hash = 0;
+    for (let i = 0, len = str.length; i < len; i++) {
+        let chr = str.charCodeAt(i);
+        hash = (hash << 5) - hash + chr;
+        hash |= 0;
+    }
+    return hash;
+}
+
+function mezclarOpciones(opciones, seed) {
+    const arr = [...opciones];
+    let s = seed;
+    for (let i = arr.length - 1; i > 0; i--) {
+        s = (s * 1664525 + 1013904223) & 0xffffffff;
+        const j = Math.abs(s) % (i + 1);
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+    return arr;
+}
+
 const livesContainer = document.getElementById('livesContainer');
 const patientAvatar = document.getElementById('patientAvatar');
 const caseDescription = document.getElementById('caseDescription');
@@ -308,20 +331,27 @@ function handleMazeClick(cell, data) {
 function showMazeQuestion(door, doorKey, r, c, data) {
     const mqDiv = document.getElementById('mazeQuestion');
     mqDiv.classList.remove('hidden');
+
+    // Mezcla determinista de opciones
+    const seed = hashCode(State.codigo + "nivel5" + doorKey);
+    const opcionesMezcladas = mezclarOpciones(door.opciones, seed);
+
     let h = `<h4 style="color:var(--primary)">🚪 Puerta Bloqueada</h4><p style="font-style:italic;margin-bottom:1rem">${door.mini_caso}</p><div class="options-grid">`;
-    door.opciones.forEach((opt, i) => {
-        h += `<button class="option-btn maze-opt" data-idx="${i}">${opt}</button>`;
+    opcionesMezcladas.forEach(opt => {
+        h += `<button class="option-btn maze-opt" data-optval="${opt.replace(/"/g, '&quot;')}">${opt}</button>`;
     });
     h += '</div>';
     mqDiv.innerHTML = h;
 
     mqDiv.querySelectorAll('.maze-opt').forEach(btn => {
         btn.addEventListener('click', () => {
-            const idx = parseInt(btn.dataset.idx);
-            const correct = idx === door.correcta;
+            const optVal = btn.dataset.optval;
+            const correctText = door.opciones[door.correcta];
+            const correct = optVal === correctText;
+
             mqDiv.querySelectorAll('.maze-opt').forEach(b => {
                 b.disabled = true;
-                if (parseInt(b.dataset.idx) === door.correcta) b.classList.add('correct');
+                if (b.dataset.optval === correctText) b.classList.add('correct');
             });
 
             if (correct) {
@@ -415,7 +445,7 @@ function renderTrainingTurn(data) {
         <div class="options-grid">`;
 
     // Mezclar índices de forma determinista para Nivel 6 Turnos
-    const seed = Utils.hashCode(State.codigo + "nivel6" + turn.turno);
+    const seed = hashCode(State.codigo + "nivel6" + turn.turno);
     let indices = [0, 1, 2, 3];
     indices = mezclarOpciones(indices, seed);
 
@@ -515,7 +545,7 @@ function handleMinefieldClick(cell, data) {
     mqDiv.classList.remove('hidden');
 
     // Mezcla determinista de opciones
-    const seed = Utils.hashCode(State.codigo + "nivel6_mina_" + minefieldQIdx);
+    const seed = hashCode(State.codigo + "nivel6_mina_" + minefieldQIdx);
     const opcionesMezcladas = mezclarOpciones(q.opciones, seed);
 
     let h = `<h4>🐕 Bruno olfatea... ¿Puedes ayudarlo?</h4><p style="font-style:italic;margin-bottom:1rem">${q.pregunta}</p><div class="options-grid">`;
