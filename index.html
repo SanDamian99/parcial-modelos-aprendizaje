@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Parcial - Modelos de Aprendizaje</title>
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>Modelos de Aprendizaje</h1>
+      <p>Primer Corte - Parcial Digital Interactivo</p>
+    </header>
+
+    <div class="card">
+      <h2>Identificación del Estudiante</h2>
+      <p style="margin-bottom: 2rem;">Por favor, ingresa tus datos para iniciar el parcial. Esta información quedará registrada junto con tus respuestas.</p>
+      
+      <form id="loginForm">
+        <div class="form-group">
+          <label for="nombre">Nombre Completo</label>
+          <input type="text" id="nombre" class="form-control" placeholder="Ej. Juan Pérez" required autocomplete="off">
+        </div>
+        
+        <div class="form-group">
+          <label for="codigo">Código Estudiantil</label>
+          <input type="text" id="codigo" class="form-control" placeholder="Ej. 2021134" required autocomplete="off">
+        </div>
+
+        <button type="submit" class="btn mt-2">Iniciar Parcial (Parte 1: Quiz)</button>
+      </form>
+    </div>
+  </div>
+
+  <script src="js/config.js"></script>
+  <script src="js/state.js"></script>
+  <script>
+    document.getElementById('loginForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const nombre = document.getElementById('nombre').value.trim();
+      const codigo = document.getElementById('codigo').value.trim();
+      
+      if (nombre && codigo) {
+        State.initStudent(nombre, codigo);
+        window.location.href = 'parte1/index.html';
+      }
+    });
+
+    // Sesión activa anterior (idempotencia)
+    if (State.isLoggedIn()) {
+      const student = State.getStudent();
+      const continuing = confirm(`Hay una sesión activa para ${student.name} (${student.id}). \n\n¿Deseas continuar tu intento actual? Si seleccionas Cancelar, se borrará tu progreso y empezarás desde cero.`);
+      if (continuing) {
+        // Redirigir según el estado
+        const quizResults = State.getQuizResults();
+        if (quizResults && quizResults.puntaje_total !== undefined) {
+           window.location.href = 'parte2/index.html';
+        } else {
+           window.location.href = 'parte1/index.html';
+        }
+      } else {
+        sessionStorage.clear();
+      }
+    }
+  </script>
+</body>
+</html>

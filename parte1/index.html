@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Parte 1: Quiz - Parcial de Psicología</title>
+    <link rel="stylesheet" href="../css/styles.css">
+    <style>
+        .timer {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: var(--danger);
+            text-align: right;
+            margin-bottom: 1rem;
+        }
+
+        .options-grid {
+            display: grid;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .option-btn {
+            padding: 1rem;
+            border: 2px solid #ddd;
+            border-radius: var(--border-radius);
+            background: #fff;
+            cursor: pointer;
+            text-align: left;
+            font-size: 1rem;
+            font-family: inherit;
+            transition: all 0.2s;
+        }
+
+        .option-btn:hover:not(:disabled) {
+            border-color: var(--primary-light);
+            background: #f0f4f8;
+        }
+
+        .option-btn.correct {
+            background-color: var(--success);
+            color: white;
+            border-color: var(--success);
+        }
+
+        .option-btn.incorrect {
+            background-color: var(--danger);
+            color: white;
+            border-color: var(--danger);
+        }
+
+        .option-btn:disabled {
+            cursor: default;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        #summary {
+            text-align: center;
+        }
+
+        .score-box {
+            background: #f8f9fa;
+            padding: 1rem;
+            border-radius: var(--border-radius);
+            margin: 1rem 0;
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap;
+        }
+
+        .score-item {
+            margin: 0.5rem;
+        }
+
+        .score-item strong {
+            display: block;
+            font-size: 1.2rem;
+            color: var(--primary);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <header>
+            <h1>Parte 1: Quiz de Conceptos</h1>
+            <p id="studentDisplay">Estudiante: -</p>
+        </header>
+
+        <div id="quizContainer" class="card">
+            <div class="timer" id="timerDisplay">Tiempo restante: 00:00</div>
+            <div id="progressDisplay" style="margin-bottom:1rem;color:#666;font-weight:500;">Pregunta 1 de 15</div>
+
+            <h3 id="questionText">Cargando pregunta...</h3>
+
+            <div class="options-grid" id="optionsContainer">
+                <!-- Opciones generadas por JS -->
+            </div>
+
+            <div id="feedbackContainer" class="feedback hidden">
+                <!-- Feedback de la respuesta -->
+            </div>
+
+            <button id="nextBtn" class="btn mt-2 hidden">Siguiente Pregunta</button>
+        </div>
+
+        <div id="summaryContainer" class="card hidden">
+            <h2>Resultados de la Parte 1</h2>
+            <p>Has completado el quiz satisfactoriamente. Aquí tienes un resumen de tu desempeño por temática evaluada:
+            </p>
+
+            <div class="score-box" id="scoreDetails">
+                <!-- Creado por JS -->
+            </div>
+            <p class="text-center" style="font-size:1.2rem;"><strong>Puntaje Total:</strong> <span
+                    id="totalScore">0/15</span></p>
+
+            <p class="mt-2 mb-2 text-center">A continuación, pasarás a la Parte 2: El juego de Roleplay. Una vez
+                inicies, tu avance en esta primera sección y tu nota quedarán guardados.</p>
+            <button id="goToGameBtn" class="btn mb-2">Continuar a la Parte 2</button>
+        </div>
+    </div>
+
+    <script src="../js/config.js"></script>
+    <script src="../js/state.js"></script>
+    <script src="../data/questions.js"></script>
+    <script src="../js/db.js"></script>
+    <script src="../js/quiz.js"></script>
+</body>
+
+</html>

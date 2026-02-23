@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Parte 2: Clínica del Comportamiento - Parcial</title>
+    <link rel="stylesheet" href="../css/styles.css">
+    <link rel="stylesheet" href="../css/game.css">
+</head>
+
+<body>
+    <div class="container game-container">
+        <header class="game-header card">
+            <div class="header-info">
+                <h2 id="levelTitle" style="margin-bottom:0;">NIVEL 0: Tutorial</h2>
+                <div class="stats">
+                    <span id="gameTimer" class="timer-badge">30:00</span>
+                    <span id="livesContainer" class="lives">
+                        <!-- Corazones -->
+                    </span>
+                </div>
+            </div>
+            <p id="studentDisplayGame" style="margin-top:0.5rem; font-weight:500;">Estudiante: -</p>
+        </header>
+
+        <div class="game-stage">
+            <div class="patient-card">
+                <div id="patientAvatar" class="avatar neutral">😐</div>
+                <p id="caseDescription" class="case-text"></p>
+            </div>
+
+            <div id="levelWorkspace" class="workspace card">
+                <!-- Content injected by game.js based on level type -->
+            </div>
+
+            <div id="gameFeedback" class="feedback hidden" style="margin-bottom: 1.5rem;"></div>
+
+            <div class="action-bar" style="display:flex; justify-content: flex-end;">
+                <button id="validateBtn" class="btn">Validar Intervención</button>
+                <button id="nextLevelBtn" class="btn btn-success hidden">Avanzar al Siguiente Caso</button>
+            </div>
+        </div>
+
+        <div id="gameSummary" class="card hidden text-center">
+            <h2>¡Has completado el Parcial!</h2>
+            <p class="mt-2 mb-2">Tus respuestas de la Parte 1 y de la Parte 2 han sido registradas exitosamente. El
+                profesor evaluará las preguntas abiertas de los niveles superiores y añadirá la calificación final a tu
+                récord estudiantil.</p>
+
+            <div class="score-box">
+                <div class="score-item" style="font-size:1.5rem; padding: 1rem;">Nivel Clínico Alcanzado: <strong
+                        id="maxLevelDisplay" style="color:var(--success)"></strong></div>
+            </div>
+
+            <button class="btn mt-2" onclick="window.location.href='../index.html'">Volver a la Pantalla de
+                Inicio</button>
+        </div>
+    </div>
+
+    <script src="../js/config.js"></script>
+    <script src="../js/state.js"></script>
+    <script src="../data/cases.js"></script>
+    <script src="../js/db.js"></script>
+    <script src="../js/game.js"></script>
+</body>
+
+</html>
