@@ -1,420 +1,404 @@
 // data/questions.js
-// Banco de 45 preguntas: 15 Conductismo Clásico, 15 Operante, 15 Aprendizaje Social
+// Banco de 48 preguntas: 16 por teoría × 4 contextos (educativo, organizacional, jurídico, social)
+// Cada contexto tiene exactamente 12 preguntas (4 por teoría)
 const QUESTIONS_BANK = [
-  // ═══════════════════════════════════════════
-  // CONDUCTISMO CLÁSICO (15 preguntas)
-  // ═══════════════════════════════════════════
+  // ════════════════════════════════════════════════════════
+  // CONTEXTO EDUCATIVO 🏫 (12 preguntas: 4 clásico, 4 operante, 4 social)
+  // ════════════════════════════════════════════════════════
   {
-    id: "CC_001",
-    topic: "clasico",
-    question: "Para un paciente de 80 años, el hospital es aversivo. Si el sonido del monitor cardíaco (Bip-Bip) precede siempre a una inyección dolorosa, el Bip-Bip se convierte en predictor de dolor mediante:",
-    correct: "Contigüidad Temporal",
-    distractors: ["Reforzamiento Negativo", "Aprendizaje Observacional", "Castigo Positivo"],
-    explanation: "La contigüidad temporal es el principio por el cual dos estímulos que ocurren juntos en el tiempo se asocian. El Bip-Bip (EN) precede consistentemente a la inyección (EI), estableciendo una asociación clásica.",
-    concept: "Contigüidad temporal en condicionamiento clásico"
-  },
-  {
-    id: "CC_002",
-    topic: "clasico",
-    question: "Si el sonido de la sirena de ambulancia (Neutro) se asocia repetidamente con llegada de pacientes críticos (EI) y ahora provoca alerta fisiológica en el personal, la sirena es un:",
-    correct: "Estímulo Condicionado",
-    distractors: ["Estímulo Incondicionado", "Respuesta Incondicionada", "Reforzador Secundario"],
-    explanation: "La sirena era un estímulo neutro que, tras asociarse repetidamente con un EI (llegada de pacientes críticos), adquirió la capacidad de provocar una respuesta por sí sola, convirtiéndose en un Estímulo Condicionado (EC).",
+    id: "ED_CC_01", topic: "clasico", context: "educativo",
+    question: "Un estudiante tuvo una mala experiencia en un examen de álgebra. Ahora, solo entrar al salón de matemáticas le causa ansiedad, aunque hoy no hay examen. El salón funciona como:",
+    correct: "Estímulo Condicionado (EC)",
+    distractors: ["Estímulo Incondicionado", "Respuesta Incondicionada", "Estímulo Discriminativo"],
+    explanation: "El salón de matemáticas era un estímulo neutro que, tras asociarse con el trauma del examen (EI), provocó ansiedad aprendida (RC). Ahora es un EC.",
     concept: "Adquisición del EC"
   },
   {
-    id: "CC_003",
-    topic: "clasico",
-    question: "Si el 'Promedio de eventos/paciente' es 1.56 y cada nuevo evento fortalece la asociación entre 'Dolor de pecho' y 'Miedo a morir', la fuerza de la RC aumenta por:",
-    correct: "Número de apareamientos (Adquisición)",
-    distractors: ["Precondicionamiento sensorial", "Inhibición externa", "Sombreado del estímulo"],
-    explanation: "En la fase de adquisición del condicionamiento clásico, la fuerza de la Respuesta Condicionada (RC) aumenta con cada nuevo apareamiento entre el EC y el EI. A más eventos (apareamientos), mayor fuerza de la asociación.",
-    concept: "Adquisición"
-  },
-  {
-    id: "CC_004",
-    topic: "clasico",
-    question: "Si un paciente asocia la 'Bata Blanca' con malas noticias, y el médico cambia su bata por uniforme azul para reducir la ansiedad, está intentando romper la asociación mediante:",
-    correct: "Alteración del Estímulo Condicionado",
-    distractors: ["Castigo de la respuesta", "Reforzamiento diferencial", "Moldeamiento"],
-    explanation: "Al cambiar la bata blanca (EC) por un uniforme azul, se elimina el estímulo que dispara la respuesta condicionada de ansiedad. Es una estrategia de extinción por modificación del EC.",
-    concept: "Extinción por modificación del EC"
-  },
-  {
-    id: "CC_005",
-    topic: "clasico",
-    question: "Si un paciente de 35 años asocia el olor a alcohol antiséptico con dolor del infarto, pero luego de muchas visitas sin dolor el olor deja de producir miedo, ¿qué fenómeno ocurrió?",
-    correct: "Extinción",
-    distractors: ["Habituación", "Sensibilización", "Contracondicionamiento"],
-    explanation: "La extinción clásica ocurre cuando el EC (olor a alcohol) se presenta repetidamente sin el EI (dolor), debilitando progresivamente la RC (miedo) hasta que desaparece.",
-    concept: "Extinción clásica"
-  },
-  {
-    id: "CC_006",
-    topic: "clasico",
-    question: "Si un paciente con múltiples eventos asocia el dolor en el brazo izquierdo con un infarto, y ahora siente dolor por un golpe y se angustia, ¿qué fenómeno se presenta?",
+    id: "ED_CC_02", topic: "clasico", context: "educativo",
+    question: "Un niño asocia el timbre de la escuela con regaños del profesor. Si ahora el timbre de su casa también le genera angustia, ¿qué fenómeno se presenta?",
     correct: "Generalización del estímulo",
-    distractors: ["Discriminación", "Recuperación espontánea", "Inhibición latente"],
-    explanation: "La generalización ocurre cuando estímulos similares al EC original (dolor en el brazo, aunque sea por otra causa) provocan la misma RC (angustia). El paciente no discrimina entre el dolor por infarto y el dolor por golpe.",
+    distractors: ["Discriminación", "Recuperación espontánea", "Extinción"],
+    explanation: "La generalización ocurre cuando estímulos similares al EC (sonidos de timbre) evocan la misma RC (angustia). El niño no discrimina entre ambos timbres.",
     concept: "Generalización"
   },
   {
-    id: "CC_007",
-    topic: "clasico",
-    question: "Un paciente sufrió un IAM en la 'Clínica de la Presentación'. Ahora pasar por esa calle le genera taquicardia, pero pasar por otras clínicas no. Esto demuestra:",
-    correct: "Discriminación",
-    distractors: ["Generalización", "Adquisición", "Recuperación espontánea"],
-    explanation: "La discriminación es la capacidad de responder de forma diferente a estímulos similares. El paciente reacciona solo ante la clínica específica donde ocurrió el trauma, no ante otras clínicas.",
-    concept: "Discriminación de estímulos"
+    id: "ED_CC_03", topic: "clasico", context: "educativo",
+    question: "Un estudiante temía las exposiciones orales. Su profesor lo expuso gradualmente: primero hablar en parejas, luego en grupo pequeño, luego ante toda la clase. Después de un semestre, ya no siente ansiedad. ¿Qué técnica se utilizó?",
+    correct: "Desensibilización Sistemática",
+    distractors: ["Extinción abrupta", "Contracondicionamiento", "Castigo Positivo"],
+    explanation: "La desensibilización sistemática de Wolpe presenta el EC (exposición oral) en aproximaciones graduales mientras se genera relajación, debilitando la RC de ansiedad.",
+    concept: "Desensibilización sistemática"
   },
   {
-    id: "CC_008",
-    topic: "clasico",
-    question: "Un paciente del grupo 60-69 años sufre un IAM. El dolor (EI) genera miedo (RI). Semanas después, al ver el logotipo de la clínica (EN), siente ansiedad. ¿Qué función cumple el logotipo?",
-    correct: "Estímulo Condicionado (EC)",
-    distractors: ["Estímulo Incondicionado", "Respuesta Condicionada", "Estímulo Discriminativo"],
-    explanation: "El logotipo era un EN que se asoció al trauma (EI). Ahora, por sí solo, provoca ansiedad (RC), lo que lo convierte en un EC. Su función es disparar la respuesta aprendida.",
-    concept: "Función del EC"
-  },
-  {
-    id: "CC_009",
-    topic: "clasico",
-    question: "Si se introduce un ruido fuerte (EI) cada vez que el médico entra en una zona incorrecta y esto provoca una respuesta de sobresalto (RI), hablamos de:",
-    correct: "Condicionamiento Aversivo",
-    distractors: ["Condicionamiento Apetitivo", "Aprendizaje por evitación", "Castigo Negativo"],
-    explanation: "El condicionamiento aversivo usa un EI desagradable (ruido fuerte) para crear una asociación de evitación. El sobresalto es la RI natural al EI aversivo.",
-    concept: "Condicionamiento aversivo"
-  },
-  {
-    id: "CC_010",
-    topic: "clasico",
-    question: "Para un niño, el sonido de la campana escolar es neutral. Si precede siempre a un examen difícil, la campana se convierte en predictor de ansiedad mediante:",
-    correct: "Contigüidad Temporal",
-    distractors: ["Reforzamiento Negativo", "Aprendizaje Observacional", "Castigo Positivo"],
-    explanation: "La contigüidad temporal establece que dos estímulos presentados juntos repetidamente se asocian. La campana (EN) precede al examen (EI), adquiriendo propiedades de EC que predice ansiedad.",
-    concept: "Contigüidad temporal"
-  },
-  {
-    id: "CC_011",
-    topic: "clasico",
-    question: "Si la notificación del celular se asocia repetidamente con mensajes de alguien querido y ahora provoca una sonrisa, la notificación es un:",
-    correct: "Estímulo Condicionado",
-    distractors: ["Estímulo Incondicionado", "Respuesta Incondicionada", "Reforzador Secundario"],
-    explanation: "La notificación era un EN que, tras la asociación repetida con un EI apetitivo (mensajes de la persona querida), se convierte en EC capaz de provocar una RC emocional positiva (sonrisa).",
-    concept: "Adquisición del EC"
-  },
-  {
-    id: "CC_012",
-    topic: "clasico",
-    question: "Un estudiante asociaba el olor de libros viejos con estrés de exámenes. Tras un verano leyendo por placer, el olor deja de producir estrés. ¿Qué fenómeno ocurrió?",
+    id: "ED_CC_04", topic: "clasico", context: "educativo",
+    question: "Un estudiante asociaba el olor de libros viejos con estrés de exámenes. Tras un verano leyendo por placer sin exámenes, el olor deja de producir estrés. ¿Qué ocurrió?",
     correct: "Extinción",
-    distractors: ["Habituación", "Sensibilización", "Contracondicionamiento"],
-    explanation: "La extinción ocurre porque el EC (olor) se presenta reiteradamente sin el EI (examen estresante), debilitando la RC (estrés) hasta que se extingue.",
+    distractors: ["Habituación", "Sensibilización", "Inhibición latente"],
+    explanation: "La extinción clásica ocurre cuando el EC (olor a libros) se presenta repetidamente sin el EI (examen estresante), debilitando la RC (estrés) hasta que desaparece.",
     concept: "Extinción clásica"
   },
   {
-    id: "CC_013",
-    topic: "clasico",
-    question: "Un niño asocia el trueno fuerte con miedo. Si ahora el sonido de una puerta cerrándose fuerte le genera angustia, ¿qué fenómeno se presenta?",
-    correct: "Generalización del estímulo",
-    distractors: ["Discriminación", "Recuperación espontánea", "Inhibición latente"],
-    explanation: "La generalización del estímulo ocurre cuando estímulos perceptualmente similares al EC (sonidos fuertes como el portazo) evocan la misma RC (angustia) que el EC original (trueno).",
-    concept: "Generalización"
-  },
-  {
-    id: "CC_014",
-    topic: "clasico",
-    question: "Un estudiante tuvo bullying en el patio. El patio se asoció con miedo. Ahora al ver una foto del patio siente ansiedad. ¿Qué función cumple la foto?",
-    correct: "Estímulo Condicionado (EC)",
-    distractors: ["Estímulo Incondicionado", "Respuesta Condicionada", "Estímulo Discriminativo"],
-    explanation: "La foto funciona como EC de segundo orden o como EC directo (representación del lugar). La mera imagen activa la RC (ansiedad) aprendida por asociación con el evento traumático.",
-    concept: "Función del EC"
-  },
-  {
-    id: "CC_015",
-    topic: "clasico",
-    question: "Un estudiante tuvo mala experiencia en álgebra. Ahora entrar al salón de matemáticas le da nervios, pero entrar al de literatura no. Esto demuestra:",
-    correct: "Discriminación",
-    distractors: ["Generalización", "Adquisición", "Recuperación espontánea"],
-    explanation: "La discriminación consiste en responder diferencialmente a estímulos similares. El estudiante distingue entre el salón de matemáticas (EC) y el de literatura (estímulo diferente), mostrando una RC solo ante el primero.",
-    concept: "Discriminación de estímulos"
-  },
-
-  // ═══════════════════════════════════════════
-  // CONDUCTISMO OPERANTE (15 preguntas)
-  // ═══════════════════════════════════════════
-  {
-    id: "OP_001",
-    topic: "operante",
-    question: "Cuando un paciente llega a urgencias y se le quita el dolor torácico con morfina, la conducta de 'ir al hospital' se fortalece. ¿Qué contingencia explica esto?",
-    correct: "Reforzamiento Negativo (retiro de estímulo aversivo)",
-    distractors: ["Reforzamiento Positivo", "Castigo Negativo", "Extinción"],
-    explanation: "El reforzamiento negativo fortalece una conducta porque conlleva la eliminación o reducción de un estímulo aversivo (el dolor). Al ir al hospital y quitarse el dolor, la conducta de acudir se refuerza.",
-    concept: "Reforzamiento negativo"
-  },
-  {
-    id: "OP_002",
-    topic: "operante",
-    question: "Si un auditor empieza a poner multas por cada registro sin código y los registros completos aumentan, ¿qué contingencia se aplicó?",
-    correct: "Castigo Positivo para reducir la omisión",
-    distractors: ["Reforzamiento Negativo", "Extinción", "Reforzamiento Positivo"],
-    explanation: "El castigo positivo consiste en añadir un estímulo aversivo (multa) tras una conducta indeseada (omitir códigos), lo que reduce esa conducta y, como consecuencia, aumentan los registros completos.",
-    concept: "Castigo positivo"
-  },
-  {
-    id: "OP_003",
-    topic: "operante",
-    question: "Los administradores premian cada 5 procedimientos realizados con un descanso extra. Están usando un programa de reforzamiento de:",
-    correct: "Razón Fija",
-    distractors: ["Intervalo Fijo", "Razón Variable", "Intervalo Variable"],
-    explanation: "En un programa de razón fija, el reforzador se entrega después de un número fijo de respuestas (cada 5 procedimientos). Es predecible y genera pausas post-refuerzo típicas.",
-    concept: "Programa de razón fija"
-  },
-  {
-    id: "OP_004",
-    topic: "operante",
-    question: "Los médicos dejan de registrar el código CIE-10 porque el sistema no les da ninguna confirmación o beneficio por hacerlo. ¿Qué proceso operante explica la disminución?",
+    id: "ED_OP_01", topic: "operante", context: "educativo",
+    question: "Un estudiante deja de participar en clase porque el profesor nunca reacciona a sus respuestas, ni positiva ni negativamente. ¿Qué proceso operante explica la disminución?",
     correct: "Extinción por falta de reforzamiento",
-    distractors: ["Castigo positivo", "Reforzamiento negativo", "Generalización"],
-    explanation: "La extinción operante ocurre cuando una conducta aprendida deja de recibir reforzamiento. Si registrar el código no produce ningún beneficio (ni confirmación, ni reconocimiento), la conducta se debilita hasta extinguirse.",
+    distractors: ["Castigo Negativo", "Habituación", "Generalización"],
+    explanation: "La extinción operante ocurre cuando una conducta aprendida deja de recibir reforzamiento. Sin reacción del profesor (ni reconocimiento ni corrección), la conducta se debilita.",
     concept: "Extinción operante"
   },
   {
-    id: "OP_005",
-    topic: "operante",
-    question: "Los cirujanos reciben un bono económico (ficha) por cada cirugía exitosa y esto aumenta la tasa de cirugías. El bono actúa como:",
-    correct: "Reforzador Secundario",
-    distractors: ["Reforzador Primario", "Estímulo Aversivo", "Estímulo Discriminativo"],
-    explanation: "Un reforzador secundario (o condicionado) es aquel que adquiere valor reforzante por asociación con reforzadores primarios. El dinero no satisface necesidades biológicas directamente, pero puede intercambiarse por bienes que sí lo hacen.",
-    concept: "Reforzador secundario"
-  },
-  {
-    id: "OP_006",
-    topic: "operante",
-    question: "Las IPS empiezan a reportar correctamente para evitar la retención de pagos. ¿Qué tipo de aprendizaje operante es?",
-    correct: "Reforzamiento Negativo (Evitación)",
-    distractors: ["Reforzamiento Positivo", "Castigo Negativo", "Castigo Positivo"],
-    explanation: "El reforzamiento negativo de evitación fortalece conductas que previenen la aparición de un estímulo aversivo. Las IPS reportan correctamente para evitar (prevenir) la retención de pagos.",
-    concept: "Reforzamiento negativo de evitación"
-  },
-  {
-    id: "OP_007",
-    topic: "operante",
-    question: "Un paciente toma la ruta de 'Urgencias' y es atendido rápido. Es más probable que vuelva a usar urgencias para dolencias menores. Esto ilustra la:",
-    correct: "Ley del Efecto (Thorndike/Skinner)",
-    distractors: ["Ley de la Contigüidad", "Teoría del Aprendizaje Social", "Indefensión Aprendida"],
-    explanation: "La Ley del Efecto de Thorndike establece que las conductas seguidas de consecuencias satisfactorias tienden a repetirse. La atención rápida refuerza la conducta de acudir a urgencias.",
-    concept: "Ley del efecto"
-  },
-  {
-    id: "OP_008",
-    topic: "operante",
-    question: "Se observa que los cirujanos operan más porque las cirugías previas resultaron en altas tasas de supervivencia inmediata. ¿Qué actúa como reforzador?",
-    correct: "Reforzamiento Positivo",
-    distractors: ["Reforzamiento Negativo", "Castigo Positivo", "Castigo Negativo"],
-    explanation: "El reforzamiento positivo ocurre cuando se añade un estímulo agradable (el éxito, la alta supervivencia) tras la conducta (operar), lo que incrementa la probabilidad de repetir dicha conducta.",
-    concept: "Reforzamiento positivo"
-  },
-  {
-    id: "OP_009",
-    topic: "operante",
-    question: "Los auditores ignoran sistemáticamente los reportes incompletos y con el tiempo los médicos dejan de esforzarse por completarlos. Se ha producido:",
-    correct: "Extinción de la conducta de registro",
-    distractors: ["Habituación al error", "Castigo negativo", "Reforzamiento intermitente"],
-    explanation: "La extinción operante se produce cuando la conducta deja de producir consecuencias. Si completar reportes no genera ninguna respuesta (ni positiva ni negativa), la conducta se extingue.",
-    concept: "Extinción operante"
-  },
-  {
-    id: "OP_010",
-    topic: "operante",
-    question: "Un paciente experimenta alivio inmediato cada vez que toma su medicación al sentir una punzada en el pecho, y la conducta de tomar la pastilla aumenta. Esto es:",
-    correct: "Reforzamiento Negativo",
-    distractors: ["Reforzamiento Positivo", "Castigo Positivo", "Condicionamiento de Escape"],
-    explanation: "El reforzamiento negativo de escape fortalece una conducta que termina con un estímulo aversivo ya presente. La punzada (aversivo) desaparece al tomar la pastilla, reforzando la conducta de medicarse.",
-    concept: "Reforzamiento negativo de escape"
-  },
-  {
-    id: "OP_011",
-    topic: "operante",
-    question: "Un estudiante con ansiedad social va a la biblioteca y el ruido cesa inmediatamente. La conducta de 'ir a la biblioteca' se fortalece. ¿Qué contingencia explica esto?",
-    correct: "Reforzamiento Negativo",
-    distractors: ["Reforzamiento Positivo", "Castigo Negativo", "Extinción"],
-    explanation: "El reforzamiento negativo explica el fortalecimiento de la conducta porque esta produce la retirada de un estímulo aversivo (el ruido). Al ir a la biblioteca y cesar el ruido, la conducta se refuerza.",
-    concept: "Reforzamiento negativo"
-  },
-  {
-    id: "OP_012",
-    topic: "operante",
-    question: "Un profesor resta puntos por cada día de retraso en entregas y las entregas puntuales aumentan. ¿Qué contingencia se aplicó?",
-    correct: "Reforzamiento Negativo para aumentar la conducta",
-    distractors: ["Castigo Positivo", "Extinción", "Reforzamiento Positivo"],
-    explanation: "La conducta objetivo es entregar a tiempo. Los estudiantes entregan puntual para evitar la pérdida de puntos (estímulo aversivo). Esto es reforzamiento negativo de evitación: la conducta aumenta para prevenir una consecuencia aversiva.",
-    concept: "Reforzamiento negativo"
-  },
-  {
-    id: "OP_013",
-    topic: "operante",
-    question: "Coordinadores premian a tutores con un bono de café cada vez que completan 5 sesiones. Programa de reforzamiento de:",
+    id: "ED_OP_02", topic: "operante", context: "educativo",
+    question: "Una profesora otorga un sticker por cada 5 tareas completas. Los estudiantes empezaron a entregar más tareas. ¿Qué programa de reforzamiento usa?",
     correct: "Razón Fija",
     distractors: ["Intervalo Fijo", "Razón Variable", "Intervalo Variable"],
-    explanation: "Es un programa de Razón Fija porque el reforzador (bono de café) se entrega tras un número fijo y predecible de respuestas (cada 5 sesiones completadas).",
+    explanation: "En un programa de razón fija, el reforzador (sticker) se entrega después de un número fijo de respuestas (cada 5 tareas). Es predecible y genera pausas post-refuerzo.",
     concept: "Razón fija"
   },
   {
-    id: "OP_014",
-    topic: "operante",
-    question: "En un sistema de economía de fichas, los alumnos reciben un sticker por cada conducta prosocial. El sticker actúa como:",
-    correct: "Reforzador Secundario",
-    distractors: ["Reforzador Primario", "Estímulo Aversivo", "Estímulo Discriminativo"],
-    explanation: "El sticker es un reforzador secundario (condicionado) porque no satisface necesidades biológicas, pero puede intercambiarse por privilegios o premios. Su valor es aprendido, no innato.",
-    concept: "Reforzador secundario"
+    id: "ED_OP_03", topic: "operante", context: "educativo",
+    question: "Un profesor resta puntos por cada día de retraso en entregas y las entregas puntuales aumentan. ¿Qué contingencia se aplicó?",
+    correct: "Castigo Negativo",
+    distractors: ["Castigo Positivo", "Reforzamiento Positivo", "Extinción"],
+    explanation: "El castigo negativo consiste en retirar algo agradable (puntos) tras la conducta indeseada (retraso). Esto reduce la conducta de entregar tarde.",
+    concept: "Castigo negativo"
   },
   {
-    id: "OP_015",
-    topic: "operante",
-    question: "Un orientador ignora las quejas de un alumno revoltoso y con el tiempo el alumno deja de quejarse. Se ha producido:",
-    correct: "Extinción de la conducta",
-    distractors: ["Habituación", "Castigo negativo", "Reforzamiento intermitente"],
-    explanation: "Si las quejas eran mantenidas por la atención del orientador (reforzamiento positivo), al retirar la atención (ignorar), el reforzador desaparece y la conducta se extingue progresivamente.",
-    concept: "Extinción operante"
-  },
-
-  // ═══════════════════════════════════════════
-  // APRENDIZAJE SOCIAL - BANDURA (15 preguntas)
-  // ═══════════════════════════════════════════
-  {
-    id: "AS_001",
-    topic: "social",
-    question: "La caída drástica de eventos hace que los especialistas pierdan habilidad en procedimientos complejos por falta de repetición. Bandura explicaría esto como un fallo en:",
-    correct: "Retención motora y práctica",
-    distractors: ["Procesos de atención", "Motivación intrínseca", "Autoeficacia percibida"],
-    explanation: "Según Bandura, la reproducción motora requiere práctica repetida para mantener y perfeccionar la habilidad. Sin práctica, la retención motora se deteriora y la habilidad aprendida se pierde.",
-    concept: "Proceso de reproducción motora"
+    id: "ED_OP_04", topic: "operante", context: "educativo",
+    question: "Un maestro hace quizzes sorpresa sin previo aviso durante el semestre. Los estudiantes estudian de manera constante. ¿Qué programa de reforzamiento describe esto?",
+    correct: "Intervalo Variable",
+    distractors: ["Intervalo Fijo", "Razón Fija", "Razón Variable"],
+    explanation: "El programa de intervalo variable refuerza (evalúa) después de periodos impredecibles. Esto genera tasas de estudio constantes y resistentes a la extinción.",
+    concept: "Intervalo variable"
   },
   {
-    id: "AS_002",
-    topic: "social",
-    question: "La 'Autoeficacia' de Bandura se aplicaría si los pacientes con primer evento creen que:",
-    correct: "Son capaces de modificar su dieta para evitar un segundo IAM",
-    distractors: ["El sistema los curará sin esfuerzo", "El infarto fue inevitable", "Su destino depende de la suerte"],
-    explanation: "La autoeficacia es la creencia en la propia capacidad de ejecutar las conductas necesarias para lograr un resultado deseado. Creer que uno puede modificar su dieta refleja alta autoeficacia.",
-    concept: "Autoeficacia"
-  },
-  {
-    id: "AS_003",
-    topic: "social",
-    question: "Un paciente elige la Clínica Los Nogales porque escuchó a su vecino (modelo de confianza) decir que 'es la mejor para el corazón'. Su conducta se basa en:",
-    correct: "Influencia del Modelo",
-    distractors: ["Ensayo y Error", "Condicionamiento Directo", "Refuerzo Intermitente"],
-    explanation: "Según Bandura, la influencia del modelo determina las decisiones del observador. Un modelo creíble y de confianza (el vecino) influye en la conducta (elegir la clínica) sin experiencia directa.",
-    concept: "Influencia del modelo"
-  },
-  {
-    id: "AS_004",
-    topic: "social",
-    question: "La Clínica Nuestra Ibagué decide adoptar los protocolos de triaje de Los Nogales tras observar su éxito. ¿Qué tipo de aprendizaje está ocurriendo?",
-    correct: "Aprendizaje Vicario",
-    distractors: ["Moldeamiento", "Condicionamiento de segundo orden", "Aprendizaje por Insight"],
-    explanation: "El aprendizaje vicario (observacional) ocurre cuando se aprende observando las conductas de otros y sus consecuencias, sin experiencia directa. La clínica observó el éxito de otra e imitó su protocolo.",
-    concept: "Aprendizaje vicario"
-  },
-  {
-    id: "AS_005",
-    topic: "social",
-    question: "Las demás clínicas ven que la Fundación Cardiovascular recibe incentivos financieros y se motivan a competir. Se ejemplifica el concepto de:",
-    correct: "Refuerzo Vicario",
-    distractors: ["Facilitación de respuesta", "Inhibición desinhibitoria", "Atención selectiva"],
-    explanation: "El refuerzo vicario ocurre cuando el observador se motiva al ver que otro (el modelo) recibe refuerzo por su conducta. Las clínicas ven los incentivos ajenos y se motivan a competir.",
-    concept: "Refuerzo vicario"
-  },
-  {
-    id: "AS_006",
-    topic: "social",
-    question: "Sin ver las consecuencias reales de los procedimientos, Bandura diría que es difícil establecer aprendizaje porque falta:",
-    correct: "El componente motivacional del refuerzo",
-    distractors: ["La atención selectiva", "La reproducción motora", "La codificación simbólica"],
-    explanation: "Sin observar las consecuencias (refuerzo o castigo vicario), falta el componente motivacional que impulsa al observador a reproducir la conducta. La motivación depende de anticipar resultados.",
-    concept: "Motivación y refuerzo vicario"
-  },
-  {
-    id: "AS_007",
-    topic: "social",
-    question: "Un médico residente observa a su jefe diagnosticar correctamente y empieza a usar esos mismos criterios. Bandura llamaría a este proceso:",
-    correct: "Modelamiento (Modeling)",
-    distractors: ["Condicionamiento Instrumental", "Aprendizaje Latente", "Desensibilización Sistemática"],
-    explanation: "El modelamiento es el proceso central del aprendizaje social: un observador adquiere nuevas conductas o modifica las existentes al observar a un modelo. El residente observa e imita al jefe.",
-    concept: "Modelamiento"
-  },
-  {
-    id: "AS_008",
-    topic: "social",
-    question: "Si la EPS publica un ranking donde felicita a la mejor clínica esperando que las otras mejoren por competencia, apela a:",
-    correct: "Motivación por incentivo vicario",
-    distractors: ["Condicionamiento de evitación", "Ley del ejercicio", "Programas de razón fija"],
-    explanation: "El incentivo vicario motiva al observador mostrándole las recompensas que reciben otros. Al publicar el ranking y felicitar al mejor, se espera que el resto se motive a imitar la conducta exitosa.",
-    concept: "Incentivo vicario"
-  },
-  {
-    id: "AS_009",
-    topic: "social",
-    question: "Un médico junior ve que su jefe omite el diagnóstico CIE-10 sin recibir sanción, y el junior imita la omisión debido a:",
-    correct: "Desinhibición por falta de consecuencias negativas",
-    distractors: ["Reforzamiento Vicario Positivo", "Generalización de respuesta", "Aprendizaje por descubrimiento"],
-    explanation: "La desinhibición ocurre cuando el observador ve que una conducta prohibida no recibe castigo, lo que reduce su inhibición para realizar esa misma conducta. No ver sanción 'autoriza' la imitación.",
-    concept: "Desinhibición"
-  },
-  {
-    id: "AS_010",
-    topic: "social",
-    question: "Un paciente nuevo observa en la sala de espera que otros pacientes están tranquilos y esto reduce su propia ansiedad. Ha ocurrido un efecto de:",
-    correct: "Inhibición de la respuesta de miedo",
-    distractors: ["Desinhibición de conductas", "Facilitación social", "Condicionamiento directo"],
-    explanation: "La inhibición vicaria ocurre cuando observar la calma de otros (modelos) inhibe la respuesta de miedo del observador. Ver que otros no muestran ansiedad reduce la propia.",
+    id: "ED_AS_01", topic: "social", context: "educativo",
+    question: "Una profesora observa que al regañar a un alumno frente al grupo, los demás se vuelven más callados. ¿Qué concepto de Bandura explica el silencio de los demás?",
+    correct: "Inhibición vicaria",
+    distractors: ["Desinhibición", "Refuerzo Vicario Positivo", "Modelamiento"],
+    explanation: "La inhibición vicaria ocurre cuando los observadores ven que la conducta de otro (hablar) es castigada, lo que inhibe esa misma conducta en ellos mismos.",
     concept: "Inhibición vicaria"
   },
   {
-    id: "AS_011",
-    topic: "social",
-    question: "La Autoeficacia de Bandura se aplicaría si un estudiante que reprobó su primer examen cree que:",
-    correct: "Es capaz de mejorar su método de estudio para aprobar el siguiente",
-    distractors: ["El profesor lo aprobará sin esfuerzo", "Reprobar fue mala suerte", "Su inteligencia es fija"],
-    explanation: "La autoeficacia es la creencia en la propia capacidad para ejecutar acciones necesarias. Creer que uno puede cambiar su método de estudio refleja alta autoeficacia, a diferencia del fatalismo o el locus de control externo.",
-    concept: "Autoeficacia"
+    id: "ED_AS_02", topic: "social", context: "educativo",
+    question: "Un estudiante de primer semestre imita la forma de tomar apuntes del mejor alumno del curso sin que nadie se lo indique. ¿Qué proceso de Bandura explica esto?",
+    correct: "Modelamiento",
+    distractors: ["Condicionamiento Instrumental", "Aprendizaje Latente", "Ensayo y Error"],
+    explanation: "El modelamiento es el proceso central del aprendizaje social: adquirir conductas nuevas al observar a un modelo. El estudiante observa al mejor alumno e imita su técnica.",
+    concept: "Modelamiento"
   },
   {
-    id: "AS_012",
-    topic: "social",
-    question: "Un aspirante elige una universidad porque su hermano mayor (modelo de éxito) dice que 'es la mejor para conseguir empleo'. Su conducta se basa en:",
-    correct: "Influencia del Modelo",
-    distractors: ["Ensayo y Error", "Condicionamiento Directo", "Refuerzo Intermitente"],
-    explanation: "La influencia del modelo es clave en la teoría de Bandura. Un modelo prestigioso o de confianza (hermano exitoso) ejerce una influencia directa sobre las decisiones del observador.",
-    concept: "Influencia del modelo"
-  },
-  {
-    id: "AS_013",
-    topic: "social",
-    question: "Una escuela pequeña adopta el método de enseñanza de una institución de élite tras observar cómo sus estudiantes ganan premios. ¿Qué aprendizaje ocurre?",
-    correct: "Aprendizaje Vicario",
-    distractors: ["Moldeamiento", "Condicionamiento de segundo orden", "Aprendizaje por Insight"],
-    explanation: "El aprendizaje vicario permite adquirir nuevas conductas o estrategias al observar los resultados que obtienen otros. La escuela pequeña imita sin experiencia directa, basándose en la observación del éxito ajeno.",
-    concept: "Aprendizaje vicario"
-  },
-  {
-    id: "AS_014",
-    topic: "social",
+    id: "ED_AS_03", topic: "social", context: "educativo",
     question: "Los estudiantes de primer año ven que los de último año reciben becas por publicar artículos, y esto los motiva a iniciar proyectos propios. Se ejemplifica:",
     correct: "Refuerzo Vicario",
-    distractors: ["Facilitación de respuesta", "Inhibición desinhibitoria", "Atención selectiva"],
-    explanation: "El refuerzo vicario es observar que la conducta de otro (publicar) es seguida de una consecuencia positiva (beca), lo que motiva al observador a realizar la misma conducta.",
+    distractors: ["Facilitación social", "Atención selectiva", "Condicionamiento de segundo orden"],
+    explanation: "El refuerzo vicario motiva al observador cuando ve que otro (el modelo) recibe refuerzo por su conducta. Ver las becas ajenas motiva la misma conducta.",
     concept: "Refuerzo vicario"
   },
   {
-    id: "AS_015",
-    topic: "social",
-    question: "Un practicante ve que su tutor llega tarde sin recibir sanción, y empieza a llegar tarde también. Esto ocurre por:",
+    id: "ED_AS_04", topic: "social", context: "educativo",
+    question: "Un estudiante que reprobó cree que puede mejorar su método de estudio y aprobar la próxima vez. Bandura llamaría a esta creencia:",
+    correct: "Autoeficacia",
+    distractors: ["Locus de control interno", "Motivación extrínseca", "Refuerzo intermitente"],
+    explanation: "La autoeficacia es la creencia en la propia capacidad para ejecutar acciones necesarias. Creer que puede cambiar su método de estudio refleja alta autoeficacia.",
+    concept: "Autoeficacia"
+  },
+
+  // ════════════════════════════════════════════════════════
+  // CONTEXTO ORGANIZACIONAL 🏢 (12 preguntas: 4 clásico, 4 operante, 4 social)
+  // ════════════════════════════════════════════════════════
+  {
+    id: "OR_CC_01", topic: "clasico", context: "organizacional",
+    question: "Un empleado sufrió un accidente en la planta de producción. Ahora el sonido de la maquinaria (antes neutral) le genera taquicardia. El sonido es un:",
+    correct: "Estímulo Condicionado (EC)",
+    distractors: ["Estímulo Incondicionado", "Respuesta Incondicionada", "Reforzador Secundario"],
+    explanation: "El sonido de la maquinaria era neutro hasta que se asoció con el accidente (EI). Ahora provoca taquicardia (RC) por sí solo: es un EC.",
+    concept: "Adquisición del EC"
+  },
+  {
+    id: "OR_CC_02", topic: "clasico", context: "organizacional",
+    question: "Una empleada asociaba las juntas con regaños de su jefe. Cuando cambió de empresa y las juntas eran positivas, dejó de sentir ansiedad. Se produjo:",
+    correct: "Extinción",
+    distractors: ["Generalización", "Discriminación", "Inhibición latente"],
+    explanation: "La extinción ocurre cuando el EC (juntas) se presenta sin el EI (regaños), debilitando la RC (ansiedad). El nuevo contexto positivo aceleró la extinción.",
+    concept: "Extinción clásica"
+  },
+  {
+    id: "OR_CC_03", topic: "clasico", context: "organizacional",
+    question: "Un trabajador que fue despedido por llamada telefónica, ahora siente ansiedad cada vez que suena su celular en horario laboral, pero no cuando suena en fin de semana. Esto demuestra:",
+    correct: "Discriminación",
+    distractors: ["Generalización", "Adquisición", "Recuperación espontánea"],
+    explanation: "La discriminación permite responder de forma diferente según el contexto. El trabajador discrimina entre el sonido en horario laboral (contexto amenazante) y fin de semana.",
+    concept: "Discriminación de estímulos"
+  },
+  {
+    id: "OR_CC_04", topic: "clasico", context: "organizacional",
+    question: "Un empleado fue humillado en una presentación con diapositivas. Ahora, ver el logo de PowerPoint le genera nerviosismo. Si el logo de Keynote también le genera ansiedad, ¿qué ocurre?",
+    correct: "Generalización del estímulo",
+    distractors: ["Discriminación", "Sensibilización", "Contracondicionamiento"],
+    explanation: "La generalización ocurre cuando estímulos perceptualmente similares (logos de software de presentación) evocan la misma RC. No discrimina entre programas.",
+    concept: "Generalización"
+  },
+  {
+    id: "OR_OP_01", topic: "operante", context: "organizacional",
+    question: "Un vendedor recibe comisión por cada venta cerrada, sin importar cuánto tiempo tardó. ¿Qué programa de reforzamiento describe este esquema?",
+    correct: "Razón Fija",
+    distractors: ["Intervalo Fijo", "Razón Variable", "Intervalo Variable"],
+    explanation: "Es un programa de razón fija: el reforzador (comisión) se entrega después de un número fijo de respuestas (cada venta cerrada).",
+    concept: "Razón fija"
+  },
+  {
+    id: "OR_OP_02", topic: "operante", context: "organizacional",
+    question: "El gerente dejó de dar bonos a su equipo de ventas y la productividad cayó drásticamente. Se produjo:",
+    correct: "Extinción operante",
+    distractors: ["Castigo Negativo", "Habituación", "Reforzamiento intermitente"],
+    explanation: "Si una conducta (vender) deja de recibir reforzamiento (bonos), se extingue progresivamente. La productividad caída es la consecuencia esperada de la extinción.",
+    concept: "Extinción operante"
+  },
+  {
+    id: "OR_OP_03", topic: "operante", context: "organizacional",
+    question: "Un jefe aplica multas por cada retraso en el reporte semanal y los reportes empiezan a llegar a tiempo. ¿Qué contingencia se aplicó?",
+    correct: "Castigo Positivo",
+    distractors: ["Reforzamiento Negativo", "Extinción", "Reforzamiento Positivo"],
+    explanation: "El castigo positivo añade un estímulo aversivo (multa) tras la conducta indeseada (retraso), lo que reduce esa conducta.",
+    concept: "Castigo positivo"
+  },
+  {
+    id: "OR_OP_04", topic: "operante", context: "organizacional",
+    question: "Los empleados cumplen normas de seguridad para evitar que les descuenten del salario. La conducta de seguir normas se fortalece por:",
+    correct: "Reforzamiento Negativo de evitación",
+    distractors: ["Reforzamiento Positivo", "Castigo Positivo", "Condicionamiento Clásico"],
+    explanation: "El reforzamiento negativo de evitación fortalece conductas que previenen la aparición de un estímulo aversivo (el descuento). Siguen las normas para evitar la sanción.",
+    concept: "Reforzamiento negativo"
+  },
+  {
+    id: "OR_AS_01", topic: "social", context: "organizacional",
+    question: "Una empleada nueva imita la forma de vestir de la ejecutiva más exitosa de la empresa sin que nadie se lo haya indicado. ¿Qué proceso de Bandura explica esto?",
+    correct: "Modelamiento",
+    distractors: ["Condicionamiento Instrumental", "Aprendizaje Latente", "Desensibilización"],
+    explanation: "El modelamiento es adquirir conductas al observar a un modelo prestigioso. La ejecutiva exitosa funciona como modelo y la nueva empleada imita su conducta.",
+    concept: "Modelamiento"
+  },
+  {
+    id: "OR_AS_02", topic: "social", context: "organizacional",
+    question: "Un empleado junior ve que su jefe llega tarde sin recibir sanción y empieza a hacer lo mismo. Esto ocurre por:",
     correct: "Desinhibición por falta de consecuencias negativas",
-    distractors: ["Reforzamiento Vicario Positivo", "Generalización", "Aprendizaje por descubrimiento"],
-    explanation: "La desinhibición se produce cuando el observador constata la ausencia de castigo para una conducta prohibida, lo que reduce sus inhibiciones para realizar esa misma conducta.",
+    distractors: ["Refuerzo Vicario Positivo", "Generalización", "Aprendizaje por descubrimiento"],
+    explanation: "La desinhibición ocurre cuando el observador ve que una conducta prohibida no recibe castigo, reduciendo su inhibición para realizarla.",
     concept: "Desinhibición"
+  },
+  {
+    id: "OR_AS_03", topic: "social", context: "organizacional",
+    question: "Una empresa publica el ranking del 'Empleado del Mes' esperando que los demás se esfuercen más. Apela a:",
+    correct: "Incentivo Vicario",
+    distractors: ["Condicionamiento de evitación", "Ley del ejercicio", "Razón Fija"],
+    explanation: "El incentivo vicario motiva mostrando las recompensas que reciben otros. Al ver el reconocimiento ajeno, los observadores se motivan a imitar la conducta exitosa.",
+    concept: "Incentivo vicario"
+  },
+  {
+    id: "OR_AS_04", topic: "social", context: "organizacional",
+    question: "Un gerente cree que puede liderar un proyecto complejo porque exitosamente lideró uno similar antes. Bandura llamaría a esta creencia:",
+    correct: "Autoeficacia basada en experiencia directa",
+    distractors: ["Motivación extrínseca", "Locus de control", "Reforzamiento diferencial"],
+    explanation: "La autoeficacia se construye principalmente por experiencias de dominio previas. Haber liderado exitosamente antes fortalece la creencia en la propia capacidad.",
+    concept: "Autoeficacia"
+  },
+
+  // ════════════════════════════════════════════════════════
+  // CONTEXTO JURÍDICO ⚖️ (12 preguntas: 4 clásico, 4 operante, 4 social)
+  // ════════════════════════════════════════════════════════
+  {
+    id: "JU_CC_01", topic: "clasico", context: "juridico",
+    question: "Un juez que siempre dicta sentencias severas genera en los acusados ansiedad intensa solo al verlo entrar al tribunal. El juez funciona como:",
+    correct: "Estímulo Condicionado (EC)",
+    distractors: ["Estímulo Incondicionado", "Respuesta Incondicionada", "Estímulo Discriminativo"],
+    explanation: "La presencia del juez (neutro inicialmente) se asoció con sentencias aversivas (EI). Ahora, su sola presencia provoca ansiedad (RC): es un EC.",
+    concept: "Adquisición del EC"
+  },
+  {
+    id: "JU_CC_02", topic: "clasico", context: "juridico",
+    question: "Un ex-recluso que fue agredido en el patio de la cárcel ahora siente ansiedad en cualquier patio abierto. ¿Qué fenómeno opera?",
+    correct: "Generalización del estímulo",
+    distractors: ["Discriminación", "Extinción", "Inhibición latente"],
+    explanation: "La generalización hace que estímulos similares al EC (cualquier patio abierto) evoquen la misma RC (ansiedad) que el patio específico donde ocurrió la agresión.",
+    concept: "Generalización"
+  },
+  {
+    id: "JU_CC_03", topic: "clasico", context: "juridico",
+    question: "Una víctima de robo asoció los callejones oscuros con peligro. Después de caminar por callejones iluminados y seguros durante meses, su miedo desapareció. Se produjo:",
+    correct: "Extinción",
+    distractors: ["Habituación", "Contracondicionamiento", "Sensibilización"],
+    explanation: "La extinción ocurre al presentar reiteradamente el EC (callejones) sin el EI (robo/agresión). La RC (miedo) se debilita hasta extinguirse.",
+    concept: "Extinción clásica"
+  },
+  {
+    id: "JU_CC_04", topic: "clasico", context: "juridico",
+    question: "Un testigo siente pánico al entrar a la sala 3 del juzgado donde fue intimidado, pero no al entrar a la sala 5. Esto demuestra:",
+    correct: "Discriminación",
+    distractors: ["Generalización", "Adquisición", "Recuperación espontánea"],
+    explanation: "La discriminación es la capacidad de responder de forma diferente a estímulos similares. El testigo distingue entre la sala específica del trauma y otras salas.",
+    concept: "Discriminación de estímulos"
+  },
+  {
+    id: "JU_OP_01", topic: "operante", context: "juridico",
+    question: "Un recluso que completa programas de rehabilitación recibe reducción de condena. La conducta de participar en programas aumenta. ¿Qué contingencia opera?",
+    correct: "Reforzamiento Positivo",
+    distractors: ["Reforzamiento Negativo", "Castigo Positivo", "Extinción"],
+    explanation: "El reforzamiento positivo añade algo agradable (reducción de condena) tras la conducta deseada (completar rehabilitación), aumentando su frecuencia.",
+    concept: "Reforzamiento positivo"
+  },
+  {
+    id: "JU_OP_02", topic: "operante", context: "juridico",
+    question: "Un conductor deja de exceder el límite de velocidad porque le han puesto multas frecuentes. La reducción de la conducta se explica por:",
+    correct: "Castigo Positivo",
+    distractors: ["Reforzamiento Negativo", "Extinción", "Castigo Negativo"],
+    explanation: "El castigo positivo añade un estímulo aversivo (multa) contingente a la conducta (exceso de velocidad), lo que reduce esa conducta.",
+    concept: "Castigo positivo"
+  },
+  {
+    id: "JU_OP_03", topic: "operante", context: "juridico",
+    question: "Un abogado prepara minuciosamente sus casos porque los jueces asignan audiencias en fechas impredecibles. ¿Qué programa de reforzamiento describe esto?",
+    correct: "Intervalo Variable",
+    distractors: ["Intervalo Fijo", "Razón Fija", "Razón Variable"],
+    explanation: "El programa de intervalo variable evalúa/refuerza después de tiempos impredecibles, generando preparación constante. Las audiencias impredecibles mantienen al abogado siempre preparado.",
+    concept: "Intervalo variable"
+  },
+  {
+    id: "JU_OP_04", topic: "operante", context: "juridico",
+    question: "A un recluso con buen comportamiento le retiran las restricciones de visita. Si su buen comportamiento aumenta, se aplica:",
+    correct: "Reforzamiento Negativo",
+    distractors: ["Reforzamiento Positivo", "Castigo Negativo", "Extinción"],
+    explanation: "El reforzamiento negativo retira un estímulo aversivo (restricciones) tras la conducta deseada (buen comportamiento), fortaleciendo esa conducta.",
+    concept: "Reforzamiento negativo"
+  },
+  {
+    id: "JU_AS_01", topic: "social", context: "juridico",
+    question: "Un adolescente observa que su hermano mayor roba en tiendas sin ser atrapado y empieza a hacer lo mismo. ¿Qué concepto de Bandura explica esto?",
+    correct: "Desinhibición por ausencia de castigo vicario",
+    distractors: ["Refuerzo Vicario Positivo", "Modelamiento abstracto", "Facilitación social"],
+    explanation: "La desinhibición se produce cuando el observador ve que una conducta prohibida no recibe castigo, reduciendo sus propias inhibiciones para realizarla.",
+    concept: "Desinhibición"
+  },
+  {
+    id: "JU_AS_02", topic: "social", context: "juridico",
+    question: "Un programa de reinserción social invita a ex-reclusos exitosos a dar charlas motivacionales a los internos actuales. La técnica se basa en:",
+    correct: "Modelamiento",
+    distractors: ["Condicionamiento Operante", "Desensibilización", "Indefensión Aprendida"],
+    explanation: "El modelamiento de Bandura usa modelos creíbles (ex-reclusos exitosos) para que los observadores (internos) adquieran conductas prosociales al ver un ejemplo real.",
+    concept: "Modelamiento"
+  },
+  {
+    id: "JU_AS_03", topic: "social", context: "juridico",
+    question: "Los reclusos ven que quienes participan en talleres reciben beneficios (visitas extra), y más reclusos se inscriben. Se ejemplifica:",
+    correct: "Refuerzo Vicario",
+    distractors: ["Facilitación de respuesta", "Atención selectiva", "Condicionamiento de escape"],
+    explanation: "El refuerzo vicario motiva cuando el observador ve que la conducta de otro es reforzada. Los reclusos observan beneficios ajenos y se motivan a participar.",
+    concept: "Refuerzo vicario"
+  },
+  {
+    id: "JU_AS_04", topic: "social", context: "juridico",
+    question: "Un ex-recluso cree que puede reintegrarse a la sociedad porque completó su programa de rehabilitación exitosamente. Bandura llamaría a esto:",
+    correct: "Autoeficacia",
+    distractors: ["Locus de control externo", "Motivación intrínseca", "Reforzamiento diferencial"],
+    explanation: "La autoeficacia es la creencia en la propia capacidad de ejecutar conductas para lograr resultados. Haber completado la rehabilitación fortalece esta creencia.",
+    concept: "Autoeficacia"
+  },
+
+  // ════════════════════════════════════════════════════════
+  // CONTEXTO SOCIAL/COMUNITARIO 🏘️ (12 preguntas: 4 clásico, 4 operante, 4 social)
+  // ════════════════════════════════════════════════════════
+  {
+    id: "SO_CC_01", topic: "clasico", context: "social",
+    question: "Los vecinos de un barrio escuchan disparos cada noche. Ahora, cualquier ruido fuerte les genera sobresalto. El ruido fuerte funciona como:",
+    correct: "Estímulo Condicionado (EC)",
+    distractors: ["Estímulo Incondicionado", "Respuesta Condicionada", "Reforzador Primario"],
+    explanation: "Un ruido fuerte genérico (EN) se asoció con disparos (EI). Ahora cualquier ruido fuerte provoca sobresalto (RC) por generalización: es un EC.",
+    concept: "Generalización desde el EC"
+  },
+  {
+    id: "SO_CC_02", topic: "clasico", context: "social",
+    question: "Una familia desplazada por violencia asociaba las sirenas con ataques armados. Después de vivir en una ciudad segura durante un año, las sirenas dejaron de causar pánico. ¿Qué ocurrió?",
+    correct: "Extinción",
+    distractors: ["Habituación", "Contracondicionamiento", "Inhibición recíproca"],
+    explanation: "La extinción ocurre al presentar el EC (sirenas) sin el EI (ataques), debilitando la RC (pánico) progresivamente en el nuevo contexto seguro.",
+    concept: "Extinción clásica"
+  },
+  {
+    id: "SO_CC_03", topic: "clasico", context: "social",
+    question: "Un niño de zona rural asocia los helicópteros con fumigaciones dañinas. Si ahora tiembla al escuchar un avión pequeño pero no un avión comercial, ¿qué fenómeno se presenta?",
+    correct: "Discriminación",
+    distractors: ["Generalización", "Extinción", "Recuperación espontánea"],
+    explanation: "La discriminación permite responder de forma diferente a estímulos. El niño distingue entre aviones pequeños (similares al helicóptero) y comerciales (diferentes).",
+    concept: "Discriminación"
+  },
+  {
+    id: "SO_CC_04", topic: "clasico", context: "social",
+    question: "En un programa comunitario de salud, la llegada del profesional de bata blanca se asoció con vacunas dolorosas. Ahora los niños lloran al ver cualquier bata blanca. La bata es un:",
+    correct: "Estímulo Condicionado (EC)",
+    distractors: ["Estímulo Incondicionado", "Respuesta Incondicionada", "Estímulo Discriminativo"],
+    explanation: "La bata blanca (EN) se asoció con las vacunas dolorosas (EI). Ahora provoca llanto (RC) por sí sola: es un EC adquirido por contigüidad temporal.",
+    concept: "Adquisición del EC"
+  },
+  {
+    id: "SO_OP_01", topic: "operante", context: "social",
+    question: "Una ONG premia a las familias que reciclan con canastas de mercado. La conducta de reciclar aumenta. ¿Qué contingencia opera?",
+    correct: "Reforzamiento Positivo",
+    distractors: ["Reforzamiento Negativo", "Castigo Negativo", "Extinción"],
+    explanation: "El reforzamiento positivo añade algo agradable (canasta) tras la conducta deseada (reciclar), aumentando su frecuencia.",
+    concept: "Reforzamiento positivo"
+  },
+  {
+    id: "SO_OP_02", topic: "operante", context: "social",
+    question: "En un barrio, las familias que participan en limpieza comunitaria son exoneradas del pago de la cuota vecinal. La participación aumenta por:",
+    correct: "Reforzamiento Negativo",
+    distractors: ["Reforzamiento Positivo", "Castigo Positivo", "Condicionamiento Clásico"],
+    explanation: "El reforzamiento negativo retira un estímulo aversivo (cuota) tras la conducta deseada (participar en limpieza), fortaleciendo esa conducta.",
+    concept: "Reforzamiento negativo"
+  },
+  {
+    id: "SO_OP_03", topic: "operante", context: "social",
+    question: "Un programa social daba ayudas alimentarias a familias que asistían a talleres. Cuando suspendieron las ayudas, la asistencia cayó. Se produjo:",
+    correct: "Extinción operante",
+    distractors: ["Castigo Negativo", "Habituación", "Generalización"],
+    explanation: "La extinción operante ocurre cuando el reforzador (ayudas) deja de presentarse. La conducta (asistir a talleres) se debilita sin el reforzamiento.",
+    concept: "Extinción operante"
+  },
+  {
+    id: "SO_OP_04", topic: "operante", context: "social",
+    question: "Un municipio aplica multas a quienes arrojan basura en la calle y la conducta disminuye. ¿Qué contingencia se aplicó?",
+    correct: "Castigo Positivo",
+    distractors: ["Castigo Negativo", "Reforzamiento Negativo", "Extinción"],
+    explanation: "El castigo positivo añade un estímulo aversivo (multa) tras la conducta indeseada (arrojar basura), reduciendo su frecuencia.",
+    concept: "Castigo positivo"
+  },
+  {
+    id: "SO_AS_01", topic: "social", context: "social",
+    question: "Los jóvenes de un barrio empiezan a consumir sustancias porque ven que los líderes del grupo lo hacen sin consecuencias visibles. ¿Qué concepto de Bandura explica esto?",
+    correct: "Desinhibición por ausencia de consecuencias negativas",
+    distractors: ["Refuerzo Vicario", "Facilitación de respuesta", "Condicionamiento directo"],
+    explanation: "La desinhibición ocurre cuando el observador constata la ausencia de castigo para una conducta prohibida, reduciendo sus inhibiciones para realizarla.",
+    concept: "Desinhibición"
+  },
+  {
+    id: "SO_AS_02", topic: "social", context: "social",
+    question: "Una comunidad implementa un programa donde familias exitosas en agricultura comparten sus técnicas con otras. La adopción de nuevas técnicas aumenta. Se basa en:",
+    correct: "Modelamiento",
+    distractors: ["Ensayo y Error", "Condicionamiento Operante", "Aprendizaje Latente"],
+    explanation: "El modelamiento usa modelos creíbles (familias exitosas) para que los observadores adquieran nuevas conductas (técnicas agrícolas) por observación.",
+    concept: "Modelamiento"
+  },
+  {
+    id: "SO_AS_03", topic: "social", context: "social",
+    question: "Un programa de prevención muestra videos donde jóvenes cuentan cómo las drogas arruinaron sus vidas. Los espectadores muestran menor intención de consumir. Esto es:",
+    correct: "Castigo Vicario",
+    distractors: ["Refuerzo Vicario", "Inhibición latente", "Extinción"],
+    explanation: "El castigo vicario ocurre cuando el observador ve las consecuencias negativas que sufre otro (el modelo), lo que reduce la intención de imitar esa conducta.",
+    concept: "Castigo vicario"
+  },
+  {
+    id: "SO_AS_04", topic: "social", context: "social",
+    question: "Una madre soltera, tras completar un programa de microcrédito, cree que puede emprender su propio negocio. Bandura llamaría a esto:",
+    correct: "Autoeficacia",
+    distractors: ["Motivación extrínseca", "Locus de control", "Facilitación social"],
+    explanation: "La autoeficacia es la creencia en la propia capacidad para ejecutar acciones. La experiencia exitosa del microcrédito fortalece su sentido de eficacia personal.",
+    concept: "Autoeficacia"
   }
 ];

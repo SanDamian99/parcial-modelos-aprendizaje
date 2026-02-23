@@ -1,6 +1,5 @@
 // js/game.js
-// Motor del juego "Clínica del Comportamiento" — Parte 2 del parcial
-// Gestiona 5 niveles (Tutorial + 4 calificados) con mecánicas interactivas distintas.
+// Motor del juego "Clínica del Comportamiento" — 7 niveles (Tutorial + 6 calificados)
 
 let gameStartTime, gameTimerInterval;
 let currentLevelIdx = 0;
@@ -8,9 +7,6 @@ let currentLives = CONFIG.GAME.LIVES_PER_LEVEL;
 let currentLevelData = null;
 let levelStartTime = 0;
 
-// ═══════════════════════════════════════
-// Referencias al DOM
-// ═══════════════════════════════════════
 const studentDisplayGame = document.getElementById('studentDisplayGame');
 const levelTitle = document.getElementById('levelTitle');
 const gameTimer = document.getElementById('gameTimer');
@@ -25,37 +21,27 @@ const gameStage = document.querySelector('.game-stage');
 const gameSummary = document.getElementById('gameSummary');
 
 // ═══════════════════════════════════════
-// Inicialización del juego
+// Inicialización
 // ═══════════════════════════════════════
 function initGame() {
-    if (!State.isLoggedIn()) {
-        window.location.href = '../index.html';
-        return;
-    }
+    if (!State.isLoggedIn()) { window.location.href = '../index.html'; return; }
     const student = State.getStudent();
     studentDisplayGame.textContent = `Estudiante: ${student.name} (${student.id})`;
 
-    // Reanudar estado si existe (idempotencia)
     const gameData = State.getGameData();
     let nextLvl = 0;
     if (gameData && Object.keys(gameData.niveles).length > 0) {
         let allCompleted = true;
-        for (let i = 1; i <= 4; i++) {
+        for (let i = 1; i <= (CONFIG.GAME.TOTAL_LEVELS || 6); i++) {
             if (!gameData.niveles[`nivel${i}`] || !gameData.niveles[`nivel${i}`].completado) {
                 allCompleted = false;
                 nextLvl = i;
                 break;
             }
         }
-        if (allCompleted) {
-            finishGame();
-            return;
-        }
+        if (allCompleted) { finishGame(); return; }
     }
-    // Si aún no ha completado nivel 1, mostrar tutorial
-    if (nextLvl === 1 && (!gameData.niveles || !gameData.niveles['nivel1'])) {
-        nextLvl = 0;
-    }
+    if (nextLvl === 1 && (!gameData.niveles || !gameData.niveles['nivel1'])) nextLvl = 0;
 
     currentLevelIdx = nextLvl;
     gameStartTime = Date.now();
@@ -63,553 +49,646 @@ function initGame() {
     loadLevel(currentLevelIdx);
 }
 
-// ═══════════════════════════════════════
-// Temporizador global del juego
-// ═══════════════════════════════════════
-function startGameTimer(durationSeconds) {
-    let timeRemaining = durationSeconds;
-    updateGameTimerDisplay(timeRemaining);
+function startGameTimer(secs) {
+    let t = secs;
+    showTime(t);
     gameTimerInterval = setInterval(() => {
-        timeRemaining--;
-        updateGameTimerDisplay(timeRemaining);
-        if (timeRemaining <= 0) {
-            clearInterval(gameTimerInterval);
-            handleTimeOutGame();
-        }
+        t--;
+        showTime(t);
+        if (t <= 0) { clearInterval(gameTimerInterval); alert("Tiempo agotado."); finishGame(); }
     }, 1000);
 }
-
-function updateGameTimerDisplay(seconds) {
-    const m = Math.floor(seconds / 60).toString().padStart(2, '0');
-    const s = (seconds % 60).toString().padStart(2, '0');
-    gameTimer.textContent = `${m}:${s}`;
-    if (seconds < 300) {
-        gameTimer.style.color = 'var(--danger)';
-        gameTimer.style.fontWeight = 'bold';
-    }
+function showTime(s) {
+    gameTimer.textContent = `${String(Math.floor(s / 60)).padStart(2, '0')}:${String(s % 60).padStart(2, '0')}`;
+    if (s < 300) { gameTimer.style.color = 'var(--danger)'; gameTimer.style.fontWeight = 'bold'; }
 }
 
-function handleTimeOutGame() {
-    alert("El tiempo de la sesión clínica se ha agotado. Guardando tu progreso actual.");
-    finishGame();
-}
-
-// ═══════════════════════════════════════
-// Renderizado de vidas (corazones)
-// ═══════════════════════════════════════
 function renderLives() {
-    const filled = '♥'.repeat(currentLives);
-    const empty = '♥'.repeat(Math.max(0, CONFIG.GAME.LIVES_PER_LEVEL - currentLives));
-    livesContainer.innerHTML = filled + '<span style="color:#ddd">' + empty + '</span>';
+    const f = '♥'.repeat(currentLives), e = '♥'.repeat(Math.max(0, CONFIG.GAME.LIVES_PER_LEVEL - currentLives));
+    livesContainer.innerHTML = f + '<span style="color:#ddd">' + e + '</span>';
 }
 
-// ═══════════════════════════════════════
-// Carga y configuración de cada nivel
-// ═══════════════════════════════════════
 function loadLevel(idx) {
     currentLevelData = GAME_CASES.find(c => c.level === idx);
     if (!currentLevelData) { finishGame(); return; }
-
     currentLives = (idx === 0) ? 99 : CONFIG.GAME.LIVES_PER_LEVEL;
     levelStartTime = Date.now();
-
     renderLives();
-    if (idx === 0) {
-        livesContainer.innerHTML = '<span style="color:#888; font-size:0.9rem; letter-spacing:0">Sin penalización</span>';
-    }
-
+    if (idx === 0) livesContainer.innerHTML = '<span style="color:#888;font-size:0.9rem">Sin penalización</span>';
     levelTitle.textContent = currentLevelData.title;
     caseDescription.textContent = `"${currentLevelData.description}"`;
     patientAvatar.className = 'avatar sad';
-
-    // Emoji de avatar según nivel
-    const avatars = ['👴', '👧', '👨‍💼', '👩', '🏫'];
+    const avatars = ['👴', '👧', '👨‍💼', '👩', '🏫', '🧒', '🐕'];
     patientAvatar.textContent = avatars[idx % avatars.length];
-
     levelWorkspace.innerHTML = '';
     gameFeedback.classList.add('hidden');
     validateBtn.classList.remove('hidden');
     validateBtn.disabled = false;
     nextLevelBtn.classList.add('hidden');
-
     buildWorkspace(currentLevelData);
 }
 
-// ═══════════════════════════════════════
-// Construcción del espacio de trabajo según tipo de nivel
-// ═══════════════════════════════════════
 function buildWorkspace(data) {
-    if (data.type === 'clasico_basico') {
-        buildTutorial(data);
-    } else if (data.type === 'drag_and_drop_clasico') {
-        buildLevel1(data);
-    } else if (data.type === 'timeline_operante') {
-        buildLevel2(data);
-    } else if (data.type === 'bandura_sequence') {
-        buildLevel3(data);
-    } else if (data.type === 'integrador') {
-        buildLevel4(data);
-    }
+    if (data.type === 'clasico_basico') buildTutorial(data);
+    else if (data.type === 'drag_and_drop_clasico') buildLevel1(data);
+    else if (data.type === 'timeline_operante') buildLevel2(data);
+    else if (data.type === 'bandura_sequence') buildLevel3(data);
+    else if (data.type === 'integrador') buildLevel4(data);
+    else if (data.type === 'laberinto') buildLevel5(data);
+    else if (data.type === 'perro_entrenamiento') buildLevel6(data);
 }
 
-// ─── NIVEL 0: Tutorial con asistente virtual ───
+// ─── TUTORIAL ───
 function buildTutorial(data) {
-    // Burbuja de asistente virtual
-    let assistantHtml = '<div class="assistant-bubble">';
-    if (data.assistant_steps) {
-        data.assistant_steps.forEach(step => {
-            assistantHtml += `<p style="margin-bottom:0.5rem;">${step}</p>`;
-        });
-    } else {
-        assistantHtml += `<p>${data.message}</p>`;
-    }
-    assistantHtml += '</div>';
-
-    const optionsHtml = `
-    <option value="">Clasificar componente...</option>
-    <option value="EN">Estímulo Neutro (EN)</option>
-    <option value="EI">Estímulo Incondicionado (EI)</option>
-    <option value="RI">Respuesta Incondicionada (RI)</option>
-    <option value="EC">Estímulo Condicionado (EC)</option>
-    <option value="RC">Respuesta Condicionada (RC)</option>
-  `;
-
-    let targetsHtml = '<div class="dnd-targets" id="tutTargets">';
+    let h = '<div class="assistant-bubble">';
+    (data.assistant_steps || [data.message]).forEach(s => h += `<p style="margin-bottom:0.5rem">${s}</p>`);
+    h += '</div>';
+    const opts = `<option value="">Clasificar...</option><option value="EN">Estímulo Neutro (EN)</option><option value="EI">Estímulo Incondicionado (EI)</option><option value="RI">Respuesta Incondicionada (RI)</option><option value="EC">Estímulo Condicionado (EC)</option><option value="RC">Respuesta Condicionada (RC)</option>`;
+    h += '<div class="dnd-targets" id="tutTargets">';
     Object.entries(data.elements).forEach(([k, v]) => {
-        targetsHtml += `<div class="target-zone">
-      <div class="target-label" style="width:auto; min-width:200px;">${v}</div>
-      <select class="form-control" id="tut_${k}">${optionsHtml}</select>
-    </div>`;
+        h += `<div class="target-zone"><div class="target-label" style="min-width:200px">${v}</div><select class="form-control" id="tut_${k}">${opts}</select></div>`;
     });
-    targetsHtml += '</div>';
-
-    levelWorkspace.innerHTML = assistantHtml + targetsHtml;
+    h += '</div>';
+    levelWorkspace.innerHTML = h;
 }
 
-// ─── NIVEL 1: Diagnóstico + Drag & Drop + Intervención ───
+// ─── NIVEL 1 ───
 function buildLevel1(data) {
-    // 1. Diagnóstico
-    let html = `<div class="form-group"><label>1. Diagnóstico Principal:</label>
-    <select id="lvl1_diag" class="form-control"><option value="">Seleccionar Teoría...</option>`;
-    data.diagnosis_options.forEach(o => html += `<option value="${o}">${o}</option>`);
-    html += `</select></div>`;
-
-    // 2. Drag & Drop de etiquetas
-    let tagsHtml = `<div class="form-group"><label>2. Identificación de Componentes (Arrastra las etiquetas a los contenedores punteados):</label></div>
-    <div class="dnd-source" id="sourcePool">`;
-    const tags = ["EC", "EI", "RI", "RC"];
-    tags.forEach(t => tagsHtml += `<div class="draggable" draggable="true" id="tag_${t}">${t}</div>`);
-    tagsHtml += `</div>`;
-
-    let targetsHtml = '<div class="dnd-targets mt-2">';
+    let h = `<div class="form-group"><label>1. Diagnóstico Principal:</label><select id="lvl1_diag" class="form-control"><option value="">Seleccionar Teoría...</option>`;
+    data.diagnosis_options.forEach(o => h += `<option value="${o}">${o}</option>`);
+    h += `</select></div>`;
+    let t = `<div class="form-group"><label>2. Identificación de Componentes (Arrastra etiquetas):</label></div><div class="dnd-source" id="sourcePool">`;
+    ["EC", "EI", "RI", "RC"].forEach(x => t += `<div class="draggable" draggable="true" id="tag_${x}">${x}</div>`);
+    t += '</div><div class="dnd-targets mt-2">';
     Object.entries(data.elements_to_match).forEach(([k, v]) => {
-        targetsHtml += `<div class="target-zone">
-      <div class="target-label">${k}</div>
-      <div class="target-box" data-expected="${v}"></div>
-    </div>`;
+        t += `<div class="target-zone"><div class="target-label">${k}</div><div class="target-box" data-expected="${v}"></div></div>`;
     });
-    targetsHtml += '</div>';
-
-    // 3. Intervención
-    let intHtml = `<div class="form-group mt-2"><label>3. Intervención Recomendada:</label>
-    <select id="lvl1_interv" class="form-control"><option value="">Seleccionar Tratamiento...</option>`;
-    data.intervention_options.forEach(o => intHtml += `<option value="${o}">${o}</option>`);
-    intHtml += `</select></div>`;
-
-    levelWorkspace.innerHTML = html + tagsHtml + targetsHtml + intHtml;
+    t += '</div>';
+    let i = `<div class="form-group mt-2"><label>3. Intervención:</label><select id="lvl1_interv" class="form-control"><option value="">Seleccionar...</option>`;
+    data.intervention_options.forEach(o => i += `<option value="${o}">${o}</option>`);
+    i += `</select></div>`;
+    levelWorkspace.innerHTML = h + t + i;
     initDragAndDrop();
 }
 
-// ─── NIVEL 2: Línea de tiempo operante ───
+// ─── NIVEL 2 ───
 function buildLevel2(data) {
-    let html = `<div class="form-group"><label>1. Identifica la contingencia aplicable en cada fase comportamental:</label></div>
-    <div class="timeline">`;
+    let h = `<div class="form-group"><label>1. Identifica la contingencia en cada fase:</label></div><div class="timeline">`;
     data.phases.forEach(p => {
-        let opts = p.options.map(o => `<option value="${o}">${o}</option>`).join('');
-        html += `<div class="timeline-item"><strong>${p.text}</strong>
-      <select id="${p.id}" class="form-control"><option value="">Seleccionar contingencia...</option>${opts}</select>
-    </div>`;
+        let o = p.options.map(x => `<option value="${x}">${x}</option>`).join('');
+        h += `<div class="timeline-item"><strong>${p.text}</strong><select id="${p.id}" class="form-control"><option value="">Seleccionar...</option>${o}</select></div>`;
     });
-    html += '</div>';
-
-    let qHtml = `<div class="form-group"><label>2. Predicción: ${data.question}</label>
-    <select id="lvl2_q" class="form-control"><option value="">Seleccionar...</option>`;
-    data.question_options.forEach(o => qHtml += `<option value="${o}">${o}</option>`);
-    qHtml += '</select></div>';
-
-    let mHtml = `<div class="form-group"><label>3. Programa de mantenimiento recomendado a largo plazo:</label>
-    <select id="lvl2_m" class="form-control"><option value="">Seleccionar programa...</option>`;
-    data.maintenance_options.forEach(o => mHtml += `<option value="${o}">${o}</option>`);
-    mHtml += '</select></div>';
-
-    levelWorkspace.innerHTML = html + qHtml + mHtml;
+    h += '</div>';
+    h += `<div class="form-group"><label>2. ${data.question}</label><select id="lvl2_q" class="form-control"><option value="">Seleccionar...</option>`;
+    data.question_options.forEach(o => h += `<option value="${o}">${o}</option>`);
+    h += '</select></div>';
+    h += `<div class="form-group"><label>3. Programa de mantenimiento:</label><select id="lvl2_m" class="form-control"><option value="">Seleccionar...</option>`;
+    data.maintenance_options.forEach(o => h += `<option value="${o}">${o}</option>`);
+    h += '</select></div>';
+    levelWorkspace.innerHTML = h;
 }
 
-// ─── NIVEL 3: Secuencia de Bandura con 8 tarjetas ───
+// ─── NIVEL 3 con animación post-validación ───
 function buildLevel3(data) {
-    let html = `<div class="form-group"><label>1. Secuencia de Aprendizaje Social: Ordena los 8 componentes del flujo causal según la teoría del Modelamiento de Bandura.</label></div>`;
-
-    // Mezclar las tarjetas aleatoriamente para presentación
+    let h = `<div class="form-group"><label>1. Ordena los 8 componentes del modelamiento de Bandura:</label></div>`;
     let shuffled = [...data.terms].sort(() => Math.random() - 0.5);
-
-    let sourceHtml = '<div class="dnd-source" id="sourcePoolBandura">';
-    shuffled.forEach(t => {
-        const safeId = t.replace(/\s/g, '_');
-        sourceHtml += `<div class="draggable" draggable="true" id="btag_${safeId}">${t}</div>`;
-    });
-    sourceHtml += '</div>';
-
-    let tgtsHtml = '<div class="dnd-targets mt-2" style="display:grid; grid-template-columns: repeat(2, 1fr); gap:0.8rem;">';
+    h += '<div class="dnd-source" id="sourcePoolBandura">';
+    shuffled.forEach(t => { const id = t.replace(/\s/g, '_'); h += `<div class="draggable" draggable="true" id="btag_${id}">${t}</div>`; });
+    h += '</div><div class="dnd-targets mt-2" style="display:grid;grid-template-columns:repeat(2,1fr);gap:0.8rem">';
     for (let i = 0; i < data.correct_sequence.length; i++) {
-        tgtsHtml += `<div class="target-zone" style="flex-direction:row;">
-      <div class="target-label" style="width:70px">Paso ${i + 1}</div>
-      <div class="target-box"></div>
-    </div>`;
+        h += `<div class="target-zone" style="flex-direction:row"><div class="target-label" style="width:70px">Paso ${i + 1}</div><div class="target-box"></div></div>`;
     }
-    tgtsHtml += '</div>';
-
-    let qHtml = `<div class="form-group mt-2" style="margin-top:2rem;"><label>2. ${data.question}</label>
-    <select id="lvl3_q" class="form-control"><option value="">Seleccionar consecuencia predictiva...</option>`;
-    data.question_options.forEach(o => qHtml += `<option value="${o}">${o}</option>`);
-    qHtml += '</select></div>';
-
-    levelWorkspace.innerHTML = html + sourceHtml + tgtsHtml + qHtml;
+    h += '</div>';
+    // Panel de animación (oculto hasta después de validar)
+    h += `<div id="animPanel" class="hidden" style="margin-top:2rem;"></div>`;
+    h += `<div class="form-group mt-2" style="margin-top:2rem"><label>2. ${data.question}</label><select id="lvl3_q" class="form-control"><option value="">Seleccionar...</option>`;
+    data.question_options.forEach(o => h += `<option value="${o}">${o}</option>`);
+    h += '</select></div>';
+    levelWorkspace.innerHTML = h;
     initDragAndDrop();
 }
 
-// ─── NIVEL 4: Panel integrador ───
+function runBanduraAnimation(studentSequence, correctSequence, animationSteps) {
+    const panel = document.getElementById('animPanel');
+    if (!panel) return;
+    panel.classList.remove('hidden');
+    panel.innerHTML = `
+    <div class="anim-stage" style="background:#f0f4ff;border-radius:12px;padding:1.5rem;min-height:200px;text-align:center;">
+      <div class="anim-characters" style="margin-bottom:1rem;font-size:2.5rem;display:flex;justify-content:center;gap:1.5rem">
+        <div>👧<br><small>Amiga</small></div>
+        <div>👩<br><small>Andrea</small></div>
+        <div>💀<br><small>Familiar</small></div>
+      </div>
+      <div id="animStep" style="font-size:1.2rem;min-height:120px;"></div>
+      <div style="margin-top:1rem">
+        <button id="animPause" class="btn" style="width:auto;padding:0.5rem 1rem;margin:0 0.5rem">⏸ Pausar</button>
+        <button id="animPlay" class="btn btn-success" style="width:auto;padding:0.5rem 1rem;margin:0 0.5rem" disabled>▶ Continuar</button>
+      </div>
+    </div>`;
+
+    let stepIdx = 0, paused = false, timer = null;
+    const stepEl = document.getElementById('animStep');
+    const pauseBtn = document.getElementById('animPause');
+    const playBtn = document.getElementById('animPlay');
+
+    pauseBtn.onclick = () => { paused = true; clearTimeout(timer); pauseBtn.disabled = true; playBtn.disabled = false; };
+    playBtn.onclick = () => { paused = false; pauseBtn.disabled = false; playBtn.disabled = true; advance(); };
+
+    function advance() {
+        if (stepIdx >= studentSequence.length) { showVerdict(); return; }
+        const term = studentSequence[stepIdx];
+        const correctTerm = correctSequence[stepIdx];
+        const isRight = term === correctTerm;
+        const stepData = animationSteps.find(s => s.label === term) || { emoji: '❓', label: term, desc: '' };
+        const correctData = animationSteps.find(s => s.label === correctTerm) || { emoji: '❓', label: correctTerm, desc: '' };
+
+        let color = isRight ? '#2ecc71' : '#e74c3c';
+        stepEl.innerHTML = `
+      <div style="font-size:3rem;animation:bounce 0.6s">${stepData.emoji}</div>
+      <div style="font-size:1.4rem;font-weight:700;color:${color};margin:0.5rem 0">Paso ${stepIdx + 1}: ${term}</div>
+      <div style="font-size:0.95rem;color:#555">${isRight ? stepData.desc : `<span style="color:#e74c3c">❌ Incorrecto. Aquí debería ir: <strong>${correctTerm}</strong></span><br>${correctData.desc}`}</div>`;
+
+        stepIdx++;
+        if (!paused) timer = setTimeout(advance, 2500);
+    }
+
+    function showVerdict() {
+        const allCorrect = studentSequence.every((t, i) => t === correctSequence[i]);
+        stepEl.innerHTML = allCorrect
+            ? `<div style="background:#d4edda;padding:1.5rem;border-radius:8px"><h3 style="color:#155724">✅ Correcto — Este es exactamente el proceso que Bandura describe</h3><p>La secuencia Modelo → Observador → Atención → Retención → Reproducción → Motivación → Refuerzo Vicario → Autoeficacia es el flujo completo del aprendizaje observacional.</p></div>`
+            : `<div style="background:#f8d7da;padding:1.5rem;border-radius:8px"><h3 style="color:#721c24">❌ Secuencia Incorrecta</h3><p>La secuencia correcta es: ${correctSequence.join(' → ')}. Revisa los pasos marcados en rojo arriba.</p></div>`;
+    }
+
+    advance();
+}
+
+// ─── NIVEL 4 ───
 function buildLevel4(data) {
-    let html = `<div class="form-group"><label>1. Clasificación Sistémica: Evalúa el plan actual del colegio.</label></div>
-    <div class="panel-grid">
-      <div class="header-row">Táctica Aplicada</div>
-      <div class="header-row">Teoría Base</div>
-      <div class="header-row">Mecanismo Específico</div>`;
-
+    let h = `<div class="form-group"><label>1. Clasificación Sistémica:</label></div><div class="panel-grid"><div class="header-row">Táctica</div><div class="header-row">Teoría</div><div class="header-row">Mecanismo</div>`;
     data.interventions.forEach(inv => {
-        html += `<div class="panel-item text-left">${inv.text}</div>`;
-
-        let tOpts = inv.theory_options.map(o => `<option value="${o}">${o}</option>`).join('');
-        html += `<div class="panel-item"><select id="${inv.id}_t" class="form-control" style="max-width:200px;">
-      <option value="">Teoría...</option>${tOpts}</select></div>`;
-
-        let mOpts = inv.mech_options.map(o => `<option value="${o}">${o}</option>`).join('');
-        html += `<div class="panel-item"><select id="${inv.id}_m" class="form-control" style="max-width:200px;">
-      <option value="">Mecanismo...</option>${mOpts}</select></div>`;
+        h += `<div class="panel-item text-left">${inv.text}</div>`;
+        let to = inv.theory_options.map(o => `<option value="${o}">${o}</option>`).join('');
+        h += `<div class="panel-item"><select id="${inv.id}_t" class="form-control" style="max-width:200px"><option value="">Teoría...</option>${to}</select></div>`;
+        let mo = inv.mech_options.map(o => `<option value="${o}">${o}</option>`).join('');
+        h += `<div class="panel-item"><select id="${inv.id}_m" class="form-control" style="max-width:200px"><option value="">Mecanismo...</option>${mo}</select></div>`;
     });
-    html += '</div>';
+    h += '</div>';
+    h += `<div class="form-group"><label>2. ${data.predict_question}</label><select id="lvl4_pq" class="form-control"><option value="">Seleccionar...</option>`;
+    data.predict_options.forEach(o => h += `<option value="${o}">${o}</option>`);
+    h += '</select></div>';
+    h += `<div class="form-group mt-2"><label>3. ¿Cuál intervención podría ser contraproducente? Explica.</label><textarea id="lvl4_open1" class="form-control" placeholder="Mínimo 30 caracteres..."></textarea></div>`;
+    h += `<div class="form-group"><label>4. Propón una 5ta intervención con teoría y mecanismo.</label><textarea id="lvl4_open2" class="form-control" placeholder="Mínimo 30 caracteres..."></textarea></div>`;
+    levelWorkspace.innerHTML = h;
+}
 
-    let predictQ = `<div class="form-group"><label>2. ${data.predict_question}</label>
-    <select id="lvl4_pq" class="form-control"><option value="">Seleccionar resultado a largo plazo...</option>`;
-    data.predict_options.forEach(o => predictQ += `<option value="${o}">${o}</option>`);
-    predictQ += '</select></div>';
+// ═══════════════════════════════════════
+// NIVEL 5 — LABERINTO
+// ═══════════════════════════════════════
+let mazePlayerPos = null;
+let mazeDoorsAnswered = {};
+let mazeScore = 0;
 
-    let openQ1 = `<div class="form-group mt-2"><label>3. Análisis Crítico: Selecciona cuál de las 4 intervenciones del rector podría ser contraproducente y explica brevemente por qué.</label>
-    <textarea id="lvl4_open1" class="form-control" placeholder="Ej. La intervención X es contraproducente porque... (mínimo 30 caracteres)."></textarea></div>`;
+function buildLevel5(data) {
+    validateBtn.classList.add('hidden'); // No validate button for maze
+    mazePlayerPos = [...data.start];
+    mazeDoorsAnswered = {};
+    mazeScore = 0;
 
-    let openQ2 = `<div class="form-group"><label>4. Diseño de Intervención: Propón una 5ta intervención especificando la teoría base, el mecanismo y cómo la implementarías.</label>
-    <textarea id="lvl4_open2" class="form-control" placeholder="Describe tu propuesta desde la psicología conductual/social..."></textarea></div>`;
+    let h = `<div class="form-group"><label>Guía a 🧒 Tomás a través del laberinto. Haz clic en una celda adyacente (arriba, abajo, izquierda, derecha) para moverte. Las puertas bloqueadas 🚪 te harán una pregunta.</label></div>`;
+    h += '<div id="mazeGrid" class="maze-grid">';
 
-    levelWorkspace.innerHTML = html + predictQ + openQ1 + openQ2;
+    for (let r = 0; r < data.grid.length; r++) {
+        for (let c = 0; c < data.grid[r].length; c++) {
+            const val = data.grid[r][c];
+            let cls = 'maze-cell';
+            let content = '';
+            if (val === 0) { cls += ' maze-wall'; }
+            else if (val === 2) { cls += ' maze-door'; content = '🚪'; }
+            else { cls += ' maze-path'; }
+            if (r === data.start[0] && c === data.start[1]) content = '🧒';
+            if (r === data.end[0] && c === data.end[1]) { cls += ' maze-exit'; content = content || '🏥'; }
+            h += `<div class="${cls}" data-r="${r}" data-c="${c}" id="maze_${r}_${c}">${content}</div>`;
+        }
+    }
+    h += '</div>';
+    h += '<div id="mazeQuestion" class="hidden card mt-2" style="border:2px solid var(--primary)"></div>';
+    levelWorkspace.innerHTML = h;
+
+    // Click handlers for maze cells
+    document.querySelectorAll('.maze-cell:not(.maze-wall)').forEach(cell => {
+        cell.addEventListener('click', () => handleMazeClick(cell, data));
+    });
+}
+
+function handleMazeClick(cell, data) {
+    const r = parseInt(cell.dataset.r);
+    const c = parseInt(cell.dataset.c);
+    const [pr, pc] = mazePlayerPos;
+
+    // Must be adjacent
+    const dr = Math.abs(r - pr);
+    const dc = Math.abs(c - pc);
+    if ((dr + dc) !== 1) return; // Not adjacent
+
+    // Check if it's a door
+    const doorKey = `${r}_${c}`;
+    if (data.grid[r][c] === 2 && !mazeDoorsAnswered[doorKey]) {
+        // Show question
+        const door = data.doors.find(d => d.row === r && d.col === c);
+        if (door) {
+            showMazeQuestion(door, doorKey, r, c, data);
+            return;
+        }
+    }
+
+    // Move player
+    movePlayerTo(r, c, data);
+}
+
+function showMazeQuestion(door, doorKey, r, c, data) {
+    const mqDiv = document.getElementById('mazeQuestion');
+    mqDiv.classList.remove('hidden');
+    let h = `<h4 style="color:var(--primary)">🚪 Puerta Bloqueada</h4><p style="font-style:italic;margin-bottom:1rem">${door.mini_caso}</p><div class="options-grid">`;
+    door.opciones.forEach((opt, i) => {
+        h += `<button class="option-btn maze-opt" data-idx="${i}">${opt}</button>`;
+    });
+    h += '</div>';
+    mqDiv.innerHTML = h;
+
+    mqDiv.querySelectorAll('.maze-opt').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const idx = parseInt(btn.dataset.idx);
+            const correct = idx === door.correcta;
+            mqDiv.querySelectorAll('.maze-opt').forEach(b => {
+                b.disabled = true;
+                if (parseInt(b.dataset.idx) === door.correcta) b.classList.add('correct');
+            });
+
+            if (correct) {
+                btn.classList.add('correct');
+                mazeDoorsAnswered[doorKey] = true;
+                mazeScore++;
+                // Open door visually
+                const doorCell = document.getElementById(`maze_${r}_${c}`);
+                doorCell.classList.remove('maze-door');
+                doorCell.classList.add('maze-path', 'maze-opened');
+                doorCell.textContent = '✅';
+                mqDiv.innerHTML += `<div class="feedback correct mt-1"><strong>¡Puerta abierta!</strong> ${door.explicacion}</div>`;
+                setTimeout(() => {
+                    mqDiv.classList.add('hidden');
+                    movePlayerTo(r, c, data);
+                }, 2000);
+            } else {
+                btn.classList.add('incorrect');
+                currentLives--;
+                renderLives();
+                mqDiv.innerHTML += `<div class="feedback incorrect mt-1"><strong>Puerta cerrada.</strong> ${door.explicacion}</div>`;
+                if (currentLives <= 0) {
+                    mqDiv.innerHTML += `<p style="color:var(--danger);font-weight:bold;margin-top:1rem">⚠️ Sin vidas. Reiniciando laberinto en 3 segundos...</p>`;
+                    State.saveGameLevel(5, { completado: false, vidas_usadas: CONFIG.GAME.LIVES_PER_LEVEL, tiempo_segundos: Math.floor((Date.now() - levelStartTime) / 1000) });
+                    setTimeout(() => loadLevel(5), 3000);
+                } else {
+                    setTimeout(() => mqDiv.classList.add('hidden'), 2500);
+                }
+            }
+        });
+    });
+}
+
+function movePlayerTo(r, c, data) {
+    const oldCell = document.getElementById(`maze_${mazePlayerPos[0]}_${mazePlayerPos[1]}`);
+    if (oldCell) {
+        oldCell.textContent = oldCell.classList.contains('maze-exit') ? '🏥' : '';
+    }
+    mazePlayerPos = [r, c];
+    const newCell = document.getElementById(`maze_${r}_${c}`);
+    newCell.textContent = '🧒';
+
+    // Check if reached exit
+    if (r === data.end[0] && c === data.end[1]) {
+        gameFeedback.classList.remove('hidden');
+        gameFeedback.className = 'feedback correct';
+        gameFeedback.innerHTML = `<strong>🎉 ¡Has llegado a Tomás!</strong> Has cruzado el laberinto de su mente abriendo ${mazeScore} puertas correctamente. Tomás ahora puede recibir tratamiento.`;
+        patientAvatar.className = 'avatar happy';
+        patientAvatar.textContent = '😊';
+        State.saveGameLevel(5, { completado: true, vidas_usadas: CONFIG.GAME.LIVES_PER_LEVEL - currentLives, tiempo_segundos: Math.floor((Date.now() - levelStartTime) / 1000), puertas_abiertas: mazeScore });
+        DB.sendData(State.buildFinalPayload());
+        nextLevelBtn.classList.remove('hidden');
+    }
+}
+
+// ═══════════════════════════════════════
+// NIVEL 6 — PERRO ANTIEXPLOSIVOS
+// ═══════════════════════════════════════
+let brunoLearn = 0, brunoWell = 100, brunoTurno = 0;
+let minefieldPos = null, minefieldLives = 3, minesDetected = 0, minesExploded = 0;
+let minefieldQIdx = 0;
+let brunoPhase = 'training'; // 'training' or 'minefield'
+
+function buildLevel6(data) {
+    validateBtn.classList.add('hidden');
+    brunoLearn = 0; brunoWell = 100; brunoTurno = 0;
+    brunoPhase = 'training';
+    renderTrainingTurn(data);
+}
+
+function renderTrainingTurn(data) {
+    if (brunoTurno >= data.turnos.length) {
+        brunoPhase = 'minefield';
+        renderMinefield(data);
+        return;
+    }
+    const turn = data.turnos[brunoTurno];
+    let h = `
+    <div class="bruno-dashboard" style="display:flex;gap:1.5rem;margin-bottom:1.5rem;flex-wrap:wrap">
+      <div style="flex:1;min-width:200px;text-align:center">
+        <div style="font-size:4rem" id="brunoEmoji">🐕</div>
+        <div style="font-weight:700;margin:0.5rem 0">Bruno</div>
+        <div class="bruno-bar"><label>Aprendizaje: <span id="learnVal">${brunoLearn}%</span></label>
+          <div class="bar-bg"><div class="bar-fill bar-learn" style="width:${brunoLearn}%"></div></div></div>
+        <div class="bruno-bar"><label>Bienestar: <span id="wellVal">${brunoWell}%</span></label>
+          <div class="bar-bg"><div class="bar-fill bar-well" style="width:${brunoWell}%"></div></div></div>
+      </div>
+      <div style="flex:2;min-width:300px">
+        <h4>Turno ${turn.turno} de 5 — ${turn.concepto}</h4>
+        <p style="font-style:italic;margin-bottom:1rem">${turn.situacion}</p>
+        <div class="options-grid">`;
+    turn.opciones.forEach((opt, i) => {
+        h += `<button class="option-btn bruno-opt" data-idx="${i}">${opt}</button>`;
+    });
+    h += `</div></div></div><div id="brunoFeedback"></div>`;
+    levelWorkspace.innerHTML = h;
+
+    document.querySelectorAll('.bruno-opt').forEach(btn => {
+        btn.addEventListener('click', () => handleBrunoChoice(btn, turn, data));
+    });
+}
+
+function handleBrunoChoice(btn, turn, data) {
+    const idx = parseInt(btn.dataset.idx);
+    document.querySelectorAll('.bruno-opt').forEach(b => b.disabled = true);
+
+    let result, explanation, emoji;
+    if (idx === turn.correcta) {
+        result = turn.consecuencias.correcta;
+        explanation = turn.explicacion_correcta;
+        emoji = '🐕😊';
+        btn.classList.add('correct');
+    } else if (idx === turn.suboptima) {
+        result = turn.consecuencias.suboptima;
+        explanation = turn.explicacion_suboptima;
+        emoji = '🐕😟';
+        btn.style.background = '#f0ad4e'; btn.style.color = 'white';
+    } else {
+        result = turn.consecuencias.incorrecta;
+        explanation = turn.explicacion_incorrecta;
+        emoji = '🐕😰';
+        btn.classList.add('incorrect');
+    }
+
+    brunoLearn = Math.min(100, Math.max(0, brunoLearn + result.aprendizaje));
+    brunoWell = Math.min(100, Math.max(0, brunoWell + result.bienestar));
+
+    document.getElementById('brunoEmoji').textContent = emoji;
+    document.getElementById('learnVal').textContent = brunoLearn + '%';
+    document.getElementById('wellVal').textContent = brunoWell + '%';
+    document.querySelector('.bar-learn').style.width = brunoLearn + '%';
+    document.querySelector('.bar-well').style.width = brunoWell + '%';
+
+    const fb = document.getElementById('brunoFeedback');
+    fb.innerHTML = `<div class="feedback ${idx === turn.correcta ? 'correct' : 'incorrect'} mt-1"><strong>${idx === turn.correcta ? '¡Excelente decisión!' : 'Decisión subóptima.'}</strong><br>${explanation}</div>`;
+
+    if (brunoWell <= 0) {
+        fb.innerHTML += `<p style="color:var(--danger);font-weight:bold;margin-top:1rem">⚠️ Bruno se niega a continuar. Su bienestar llegó a 0%. Reiniciando entrenamiento en 4 segundos...</p>`;
+        setTimeout(() => { brunoLearn = 0; brunoWell = 100; brunoTurno = 0; renderTrainingTurn(data); }, 4000);
+        return;
+    }
+
+    setTimeout(() => {
+        brunoTurno++;
+        renderTrainingTurn(data);
+    }, 2500);
+}
+
+function renderMinefield(data) {
+    minefieldPos = [0, 0]; minefieldLives = CONFIG.GAME.LIVES_PER_LEVEL; minesDetected = 0; minesExploded = 0; minefieldQIdx = 0;
+    currentLives = minefieldLives;
+    renderLives();
+
+    let h = `
+    <div class="form-group"><label>🐕 Bruno está entrenado (Aprendizaje: ${brunoLearn}%, Bienestar: ${brunoWell}%). Ahora guíalo por el campo minado 5×5. Haz clic en una casilla adyacente para moverse. Si respondes correctamente, Bruno detecta las minas.</label></div>
+    <div id="minefieldGrid" class="minefield-grid">`;
+    for (let r = 0; r < 5; r++) {
+        for (let c = 0; c < 5; c++) {
+            let content = '❓';
+            let cls = 'mine-cell';
+            if (r === 0 && c === 0) { content = '🐕'; cls += ' mine-revealed'; }
+            if (r === 4 && c === 4) { content = '🏁'; }
+            h += `<div class="${cls}" data-r="${r}" data-c="${c}" id="mf_${r}_${c}">${content}</div>`;
+        }
+    }
+    h += '</div><div id="mfQuestion" class="hidden card mt-2" style="border:2px solid var(--primary)"></div>';
+    levelWorkspace.innerHTML = h;
+
+    document.querySelectorAll('.mine-cell').forEach(cell => {
+        cell.addEventListener('click', () => handleMinefieldClick(cell, data));
+    });
+}
+
+function handleMinefieldClick(cell, data) {
+    const r = parseInt(cell.dataset.r), c = parseInt(cell.dataset.c);
+    const [pr, pc] = minefieldPos;
+    if ((Math.abs(r - pr) + Math.abs(c - pc)) !== 1) return;
+
+    // Show question first
+    const cm = data.campo_minado;
+    const q = cm.preguntas[minefieldQIdx % cm.preguntas.length];
+    minefieldQIdx++;
+
+    const mqDiv = document.getElementById('mfQuestion');
+    mqDiv.classList.remove('hidden');
+    let h = `<h4>🐕 Bruno olfatea... ¿Puedes ayudarlo?</h4><p style="font-style:italic;margin-bottom:1rem">${q.pregunta}</p><div class="options-grid">`;
+    q.opciones.forEach((opt, i) => h += `<button class="option-btn mf-opt" data-idx="${i}">${opt}</button>`);
+    h += '</div>';
+    mqDiv.innerHTML = h;
+
+    mqDiv.querySelectorAll('.mf-opt').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const idx = parseInt(btn.dataset.idx);
+            const correct = idx === q.correcta;
+            mqDiv.querySelectorAll('.mf-opt').forEach(b => { b.disabled = true; if (parseInt(b.dataset.idx) === q.correcta) b.classList.add('correct'); });
+            if (!correct) btn.classList.add('incorrect');
+
+            const hasMine = cm.minas.some(m => m[0] === r && m[1] === c);
+
+            setTimeout(() => {
+                mqDiv.classList.add('hidden');
+                // Move Bruno
+                const oldCell = document.getElementById(`mf_${pr}_${pc}`);
+                oldCell.textContent = '✅'; oldCell.classList.add('mine-revealed');
+                minefieldPos = [r, c];
+                const newCell = document.getElementById(`mf_${r}_${c}`);
+                newCell.classList.add('mine-revealed');
+
+                if (hasMine) {
+                    if (correct) {
+                        // Detected!
+                        newCell.textContent = '🚩'; minesDetected++;
+                        gameFeedback.className = 'feedback correct'; gameFeedback.classList.remove('hidden');
+                        gameFeedback.innerHTML = `<strong>🚩 ¡Bruno detectó una mina!</strong> Tu respuesta correcta le permitió olfatear el peligro.`;
+                    } else {
+                        // Exploded!
+                        newCell.textContent = '💥'; minesExploded++;
+                        currentLives--; minefieldLives = currentLives;
+                        renderLives();
+                        gameFeedback.className = 'feedback incorrect'; gameFeedback.classList.remove('hidden');
+                        gameFeedback.innerHTML = `<strong>💥 ¡Mina explotada!</strong> Tu respuesta incorrecta impidió que Bruno detectara el peligro. ${q.explicacion}`;
+                        if (currentLives <= 0) {
+                            gameFeedback.innerHTML += `<br><strong style="color:var(--danger)">⚠️ Sin vidas. Reiniciando campo minado...</strong>`;
+                            State.saveGameLevel(6, { completado: false, vidas_usadas: CONFIG.GAME.LIVES_PER_LEVEL, barra_aprendizaje_final: brunoLearn, barra_bienestar_final: brunoWell, minas_detectadas: minesDetected, minas_explotadas: minesExploded, tiempo_segundos: Math.floor((Date.now() - levelStartTime) / 1000) });
+                            setTimeout(() => renderMinefield(data), 3000);
+                            return;
+                        }
+                    }
+                } else {
+                    newCell.textContent = '🐕';
+                    gameFeedback.className = 'feedback correct'; gameFeedback.classList.remove('hidden');
+                    gameFeedback.innerHTML = correct ? `<strong>✅ Terreno seguro.</strong> Respuesta correcta. Bruno avanza con confianza.` : `<strong>✅ Terreno seguro, pero respuesta incorrecta.</strong> ${q.explicacion}`;
+                }
+
+                // Check if reached exit
+                if (r === 4 && c === 4) {
+                    gameFeedback.className = 'feedback correct';
+                    gameFeedback.innerHTML = `<strong>🐕🎉 ¡Misión cumplida!</strong> Bruno cruzó el campo minado. Minas detectadas: ${minesDetected}, Minas explotadas: ${minesExploded}. ¡Una sesión clínica heroica!`;
+                    patientAvatar.textContent = '🐕'; patientAvatar.className = 'avatar happy';
+                    State.saveGameLevel(6, { completado: true, vidas_usadas: CONFIG.GAME.LIVES_PER_LEVEL - currentLives, barra_aprendizaje_final: brunoLearn, barra_bienestar_final: brunoWell, minas_detectadas: minesDetected, minas_explotadas: minesExploded, tiempo_segundos: Math.floor((Date.now() - levelStartTime) / 1000) });
+                    DB.sendData(State.buildFinalPayload());
+                    nextLevelBtn.classList.remove('hidden');
+                    nextLevelBtn.textContent = 'Finalizar Parcial';
+                }
+            }, 1500);
+        });
+    });
 }
 
 // ═══════════════════════════════════════
 // Drag & Drop con soporte mouse + touch
 // ═══════════════════════════════════════
 let draggedElement = null;
-
 function initDragAndDrop() {
     const draggables = document.querySelectorAll('.draggable');
-    const targetBoxes = document.querySelectorAll('.target-box');
+    const targets = document.querySelectorAll('.target-box');
     const sources = document.querySelectorAll('.dnd-source');
-    const allDropZones = [...targetBoxes, ...sources];
+    const allZones = [...targets, ...sources];
 
-    draggables.forEach(drg => {
-        // Mouse events
-        drg.addEventListener('dragstart', (e) => {
-            e.dataTransfer.setData('text/plain', e.target.id);
-            draggedElement = e.target;
-            setTimeout(() => e.target.style.opacity = '0.4', 0);
-        });
-        drg.addEventListener('dragend', (e) => {
-            e.target.style.opacity = '1';
-            draggedElement = null;
-        });
-
-        // Touch events (para tablets)
-        drg.addEventListener('touchstart', handleTouchStart, { passive: false });
-        drg.addEventListener('touchmove', handleTouchMove, { passive: false });
-        drg.addEventListener('touchend', handleTouchEnd, { passive: false });
+    draggables.forEach(d => {
+        d.addEventListener('dragstart', e => { e.dataTransfer.setData('text/plain', e.target.id); draggedElement = e.target; setTimeout(() => e.target.style.opacity = '0.4', 0); });
+        d.addEventListener('dragend', e => { e.target.style.opacity = '1'; draggedElement = null; });
+        d.addEventListener('touchstart', touchStart, { passive: false });
+        d.addEventListener('touchmove', touchMove, { passive: false });
+        d.addEventListener('touchend', touchEnd, { passive: false });
     });
-
-    allDropZones.forEach(box => {
-        box.addEventListener('dragover', e => {
-            e.preventDefault();
-            if (box.classList.contains('target-box')) {
-                box.style.borderColor = 'var(--primary)';
-            }
-        });
-        box.addEventListener('dragleave', () => {
-            box.style.borderColor = '';
-        });
-        box.addEventListener('drop', e => {
-            e.preventDefault();
-            box.style.borderColor = '';
-            const id = e.dataTransfer.getData('text/plain');
-            const el = document.getElementById(id);
-            if (!el) return;
-            dropIntoBox(el, box);
-        });
+    allZones.forEach(box => {
+        box.addEventListener('dragover', e => { e.preventDefault(); if (box.classList.contains('target-box')) box.style.borderColor = 'var(--primary)'; });
+        box.addEventListener('dragleave', () => box.style.borderColor = '');
+        box.addEventListener('drop', e => { e.preventDefault(); box.style.borderColor = ''; const el = document.getElementById(e.dataTransfer.getData('text/plain')); if (el) dropInto(el, box); });
     });
 }
+function dropInto(el, box) { if (box.classList.contains('target-box') && box.children.length > 0) { const src = document.querySelector('.dnd-source'); if (src) src.appendChild(box.firstChild); } box.appendChild(el); }
 
-function dropIntoBox(element, box) {
-    if (box.classList.contains('target-box') && box.children.length > 0) {
-        // Devolver el ocupante actual al pool source
-        const source = document.querySelector('.dnd-source');
-        if (source) source.appendChild(box.firstChild);
-    }
-    box.appendChild(element);
-}
-
-// ─── Touch handlers para tablets ───
-let touchClone = null;
-let touchOriginParent = null;
-
-function handleTouchStart(e) {
-    e.preventDefault();
-    draggedElement = e.target.closest('.draggable');
-    if (!draggedElement) return;
-    touchOriginParent = draggedElement.parentNode;
-
-    touchClone = draggedElement.cloneNode(true);
-    touchClone.style.position = 'fixed';
-    touchClone.style.pointerEvents = 'none';
-    touchClone.style.opacity = '0.7';
-    touchClone.style.zIndex = '9999';
-    document.body.appendChild(touchClone);
-
-    const touch = e.touches[0];
-    touchClone.style.left = touch.clientX - 30 + 'px';
-    touchClone.style.top = touch.clientY - 20 + 'px';
-    draggedElement.style.opacity = '0.3';
-}
-
-function handleTouchMove(e) {
-    e.preventDefault();
-    if (!touchClone) return;
-    const touch = e.touches[0];
-    touchClone.style.left = touch.clientX - 30 + 'px';
-    touchClone.style.top = touch.clientY - 20 + 'px';
-}
-
-function handleTouchEnd(e) {
-    e.preventDefault();
-    if (!draggedElement || !touchClone) return;
-
-    if (touchClone.parentNode) touchClone.parentNode.removeChild(touchClone);
-    touchClone = null;
-    draggedElement.style.opacity = '1';
-
-    const touch = e.changedTouches[0];
-    const dropTarget = document.elementFromPoint(touch.clientX, touch.clientY);
-    if (!dropTarget) { draggedElement = null; return; }
-
-    const box = dropTarget.closest('.target-box') || dropTarget.closest('.dnd-source');
-    if (box) {
-        dropIntoBox(draggedElement, box);
-    }
-    draggedElement = null;
-}
+let touchClone = null, touchOrigin = null;
+function touchStart(e) { e.preventDefault(); draggedElement = e.target.closest('.draggable'); if (!draggedElement) return; touchOrigin = draggedElement.parentNode; touchClone = draggedElement.cloneNode(true); touchClone.style.cssText = 'position:fixed;pointer-events:none;opacity:0.7;z-index:9999'; document.body.appendChild(touchClone); const t = e.touches[0]; touchClone.style.left = t.clientX - 30 + 'px'; touchClone.style.top = t.clientY - 20 + 'px'; draggedElement.style.opacity = '0.3'; }
+function touchMove(e) { e.preventDefault(); if (!touchClone) return; const t = e.touches[0]; touchClone.style.left = t.clientX - 30 + 'px'; touchClone.style.top = t.clientY - 20 + 'px'; }
+function touchEnd(e) { e.preventDefault(); if (!draggedElement || !touchClone) return; if (touchClone.parentNode) touchClone.parentNode.removeChild(touchClone); touchClone = null; draggedElement.style.opacity = '1'; const t = e.changedTouches[0]; const drop = document.elementFromPoint(t.clientX, t.clientY); if (drop) { const box = drop.closest('.target-box') || drop.closest('.dnd-source'); if (box) dropInto(draggedElement, box); } draggedElement = null; }
 
 // ═══════════════════════════════════════
-// Validación del nivel actual
+// Validación
 // ═══════════════════════════════════════
 validateBtn.addEventListener('click', validateCurrentLevel);
 nextLevelBtn.addEventListener('click', () => goToNextLevel());
 
 function validateCurrentLevel() {
     const data = currentLevelData;
-    let isCorrect = true;
-    let errorMsg = "Por favor selecciona una respuesta para todos los campos.";
+    let isCorrect = true, errorMsg = "Completa todos los campos.";
 
-    // ─── Tutorial ───
     if (data.type === 'clasico_basico') {
-        let allFilled = true;
-        Object.keys(data.elements).forEach(k => {
-            const select = document.getElementById(`tut_${k}`);
-            if (!select || !select.value) allFilled = false;
-            else if (select.value !== k) isCorrect = false;
-        });
-        if (!allFilled) { isCorrect = false; errorMsg = "Selecciona una clasificación para cada componente del caso."; }
-        else if (!isCorrect) {
-            errorMsg = "<strong>¡Ups! Revisa de nuevo.</strong><br/>Recuerda: la sirena antes del trauma era un <strong>EN</strong> (Estímulo Neutro). El infarto es el <strong>EI</strong> (Estímulo Incondicionado), que causaba dolor natural (<strong>RI</strong>). Tras la asociación, la sirena se vuelve un <strong>EC</strong> (Estímulo Condicionado) que produce ansiedad aprendida (<strong>RC</strong>).";
-        }
+        let ok = true;
+        Object.keys(data.elements).forEach(k => { const s = document.getElementById(`tut_${k}`); if (!s || !s.value) ok = false; else if (s.value !== k) isCorrect = false; });
+        if (!ok) { isCorrect = false; errorMsg = "Selecciona una clasificación para cada componente."; }
+        else if (!isCorrect) errorMsg = "Revisa: EN (antes del trauma), EI (causa natural), RI (respuesta natural), EC (después del aprendizaje), RC (respuesta aprendida).";
     }
-    // ─── Nivel 1 ───
     else if (data.type === 'drag_and_drop_clasico') {
-        const diag = document.getElementById('lvl1_diag').value;
-        const inter = document.getElementById('lvl1_interv').value;
-
-        if (!diag || !inter) { isCorrect = false; errorMsg = "Selecciona el diagnóstico y la intervención antes de validar."; }
+        const d = document.getElementById('lvl1_diag').value, inter = document.getElementById('lvl1_interv').value;
+        if (!d || !inter) { isCorrect = false; errorMsg = "Selecciona diagnóstico e intervención."; }
         else {
-            if (diag !== data.diagnosis_correct) isCorrect = false;
-            if (inter !== data.intervention_correct) isCorrect = false;
-
-            // Verificar Drag & Drop
-            const drops = document.querySelectorAll('.target-box[data-expected]');
-            drops.forEach(d => {
-                const expected = d.getAttribute('data-expected');
-                if (!d.firstChild || d.firstChild.textContent !== expected) {
-                    isCorrect = false;
-                }
-            });
-
-            if (!isCorrect) {
-                errorMsg = `<strong>Diagnóstico Fallido.</strong><br/>Según Pavlov, este es un caso de <em>Condicionamiento Clásico</em>. El pinchazo de anestesia es el <strong>EI</strong> (produce dolor — la <strong>RI</strong>). El sonido del taladro + dentista, al asociarse, se convierte en <strong>EC</strong> que ahora provoca llanto (<strong>RC</strong>). La intervención de elección es la <em>Desensibilización Sistemática</em> (Wolpe, 1958).`;
-            }
+            if (d !== data.diagnosis_correct) isCorrect = false; if (inter !== data.intervention_correct) isCorrect = false; document.querySelectorAll('.target-box[data-expected]').forEach(b => { if (!b.firstChild || b.firstChild.textContent !== b.getAttribute('data-expected')) isCorrect = false; });
+            if (!isCorrect) errorMsg = '<strong>Diagnóstico Fallido.</strong> Es Condicionamiento Clásico (Pavlov). Intervención: Desensibilización Sistemática (Wolpe, 1958).';
         }
     }
-    // ─── Nivel 2 ───
     else if (data.type === 'timeline_operante') {
-        const f1 = document.getElementById('fase1').value;
-        const f2 = document.getElementById('fase2').value;
-        const q = document.getElementById('lvl2_q').value;
-        const m = document.getElementById('lvl2_m').value;
-
-        if (!f1 || !f2 || !q || !m) {
-            isCorrect = false;
-            errorMsg = "Completa todas las selecciones antes de validar.";
-        } else if (f1 !== data.phases[0].correct || f2 !== data.phases[1].correct ||
-            q !== data.question_options[data.question_correct] ||
-            m !== data.maintenance_options[data.maintenance_correct]) {
-            isCorrect = false;
-            errorMsg = "<strong>Intervención Incorrecta.</strong><br/>Según Skinner, ignorar una conducta operante que no estaba siendo mantenida por atención no produce extinción. En este caso, ignorar simplemente no proporcionó reforzamiento, lo que constituye <em>Extinción</em>. El reconocimiento posterior aportó <em>Reforzamiento Positivo</em> (añadir algo agradable). Un castigo positivo suele causar <em>evitación encubierta</em> y resentimiento. El <em>Programa de Razón Variable</em> produce las tasas de respuesta más resistentes a la extinción.";
-        }
+        const f1 = document.getElementById('fase1').value, f2 = document.getElementById('fase2').value, q = document.getElementById('lvl2_q').value, m = document.getElementById('lvl2_m').value;
+        if (!f1 || !f2 || !q || !m) { isCorrect = false; errorMsg = "Completa todos los campos."; }
+        else if (f1 !== data.phases[0].correct || f2 !== data.phases[1].correct || q !== data.question_options[data.question_correct] || m !== data.maintenance_options[data.maintenance_correct]) { isCorrect = false; errorMsg = '<strong>Incorrecto.</strong> Fase 1: Extinción. Fase 2: Reforzamiento Positivo. Mantenimiento: Razón Variable.'; }
     }
-    // ─── Nivel 3 ───
     else if (data.type === 'bandura_sequence') {
         const q = document.getElementById('lvl3_q').value;
-        if (!q) { isCorrect = false; errorMsg = "Selecciona la predicción sobre autoeficacia."; }
+        if (!q) { isCorrect = false; errorMsg = "Selecciona la predicción."; }
         else if (q !== data.question_options[data.question_correct]) isCorrect = false;
-
-        // Verificar secuencia
         const drops = document.querySelectorAll('.dnd-targets .target-box');
-        let seq = [];
-        drops.forEach(d => {
-            if (d.firstChild) seq.push(d.firstChild.textContent);
-        });
+        let seq = []; drops.forEach(d => { if (d.firstChild) seq.push(d.firstChild.textContent); });
+        if (seq.length !== data.correct_sequence.length) { isCorrect = false; errorMsg = "Arrastra las 8 tarjetas."; }
+        else if (seq.join(',') !== data.correct_sequence.join(',')) isCorrect = false;
+        if (!isCorrect && seq.length === data.correct_sequence.length) errorMsg = '<strong>Secuencia Incorrecta.</strong> Orden correcto: Modelo → Observador → Atención → Retención → Reproducción → Motivación → Refuerzo Vicario → Autoeficacia.';
 
-        if (seq.length !== data.correct_sequence.length) {
-            isCorrect = false;
-            errorMsg = "Arrastra las 8 tarjetas a las zonas numeradas antes de validar.";
-        } else if (seq.join(',') !== data.correct_sequence.join(',')) {
-            isCorrect = false;
-        }
-
-        if (!isCorrect && seq.length === data.correct_sequence.length) {
-            errorMsg = "<strong>Secuencia Incorrecta.</strong><br/>Según Bandura, el orden correcto de los procesos del aprendizaje observacional es: (1) <strong>Modelo</strong> — la persona observada, (2) <strong>Observador</strong> — quien aprende, (3) <strong>Atención</strong> — debe percibir la conducta, (4) <strong>Retención</strong> — codificar simbólicamente, (5) <strong>Reproducción</strong> — capacidad motora, (6) <strong>Motivación</strong> — incentivo para ejecutar, (7) <strong>Refuerzo Vicario</strong> — observar consecuencias en el modelo, (8) <strong>Autoeficacia</strong> — creencia en la propia capacidad.";
+        // Run animation regardless (shows correct vs incorrect)
+        if (seq.length === data.correct_sequence.length && data.animation_steps) {
+            runBanduraAnimation(seq, data.correct_sequence, data.animation_steps);
         }
     }
-    // ─── Nivel 4 ───
     else if (data.type === 'integrador') {
-        let allFilled = true;
-        data.interventions.forEach(inv => {
-            const t = document.getElementById(`${inv.id}_t`).value;
-            const m_val = document.getElementById(`${inv.id}_m`).value;
-            if (!t || !m_val) allFilled = false;
-            else if (t !== inv.theory_correct || m_val !== inv.mech_correct) isCorrect = false;
-        });
-
-        const pq = document.getElementById('lvl4_pq').value;
-        if (!pq) allFilled = false;
-        else if (pq !== data.predict_options[data.predict_correct]) isCorrect = false;
-
-        const t1 = document.getElementById('lvl4_open1').value.trim();
-        const t2 = document.getElementById('lvl4_open2').value.trim();
-        if (!t1 || t1.length < 30 || !t2 || t2.length < 30) {
-            allFilled = false;
-        }
-
-        if (!allFilled) {
-            isCorrect = false;
-            errorMsg = "Completa todas las listas desplegables y redacta tus respuestas en los campos de texto (mínimo 30 caracteres cada uno).";
-        } else if (!isCorrect) {
-            errorMsg = "<strong>Clasificación Incorrecta.</strong><br/>Según la integración teórica: los exámenes sorpresa son <em>Operante</em> (Programa de Intervalo Variable — Skinner). El ranking es <em>Aprendizaje Social</em> (Incentivo Vicario — Bandura). Retirar recreos es <em>Operante</em> (Castigo Negativo: retirar algo agradable). Las charlas del ex-alumno son <em>Aprendizaje Social</em> (Modelamiento — Bandura).";
-        } else {
-            // Guardar respuestas abiertas
-            State.saveGameOpenAnswers({
-                nivel4_contraproducente: t1,
-                nivel4_intervencion: t2
-            });
-        }
+        let ok = true;
+        data.interventions.forEach(inv => { const t = document.getElementById(`${inv.id}_t`).value, m = document.getElementById(`${inv.id}_m`).value; if (!t || !m) ok = false; else if (t !== inv.theory_correct || m !== inv.mech_correct) isCorrect = false; });
+        const pq = document.getElementById('lvl4_pq').value; if (!pq) ok = false; else if (pq !== data.predict_options[data.predict_correct]) isCorrect = false;
+        const t1 = document.getElementById('lvl4_open1').value.trim(), t2 = document.getElementById('lvl4_open2').value.trim();
+        if (!t1 || t1.length < 30 || !t2 || t2.length < 30) ok = false;
+        if (!ok) { isCorrect = false; errorMsg = "Completa todas las listas y textos (mín 30 caracteres)."; }
+        else if (!isCorrect) errorMsg = '<strong>Clasificación Incorrecta.</strong> Exámenes sorpresa=Operante/IV. Ranking=Social/Incentivo Vicario. Recreos=Operante/Castigo Negativo. Charlas=Social/Modelamiento.';
+        else State.saveGameOpenAnswers({ nivel4_contraproducente: t1, nivel4_intervencion: t2 });
     }
 
     showFeedback(isCorrect, errorMsg);
 }
 
-// ═══════════════════════════════════════
-// Mostrar feedback al estudiante
-// ═══════════════════════════════════════
 function showFeedback(isCorrect, errorMsg) {
     gameFeedback.classList.remove('hidden');
-
     if (isCorrect) {
         gameFeedback.className = 'feedback correct';
-        gameFeedback.innerHTML = "<strong>¡Intervención Exitosa!</strong><br/>Has aplicado correctamente el mecanismo. El paciente muestra mejoría conductual.";
-        patientAvatar.className = 'avatar happy';
-        patientAvatar.textContent = '😊';
+        gameFeedback.innerHTML = "<strong>¡Intervención Exitosa!</strong> El paciente muestra mejoría conductual.";
+        patientAvatar.className = 'avatar happy'; patientAvatar.textContent = '😊';
         validateBtn.classList.add('hidden');
         nextLevelBtn.classList.remove('hidden');
-
-        // Guardar progreso del nivel completado (no tutorial)
         if (currentLevelIdx > 0) {
-            State.saveGameLevel(currentLevelIdx, {
-                completado: true,
-                vidas_usadas: CONFIG.GAME.LIVES_PER_LEVEL - currentLives,
-                tiempo_segundos: Math.floor((Date.now() - levelStartTime) / 1000)
-            });
-            // Enviar progreso parcial al Sheet después de cada nivel
+            State.saveGameLevel(currentLevelIdx, { completado: true, vidas_usadas: CONFIG.GAME.LIVES_PER_LEVEL - currentLives, tiempo_segundos: Math.floor((Date.now() - levelStartTime) / 1000) });
             DB.sendData(State.buildFinalPayload());
         }
-
     } else {
-        // Descontar vida (excepto en tutorial)
-        if (currentLevelIdx > 0) {
-            currentLives--;
-            renderLives();
-        }
-
+        if (currentLevelIdx > 0) { currentLives--; renderLives(); }
         gameFeedback.className = 'feedback incorrect';
         gameFeedback.innerHTML = errorMsg;
-        patientAvatar.className = 'avatar sad';
-        patientAvatar.textContent = '😟';
-
+        patientAvatar.className = 'avatar sad'; patientAvatar.textContent = '😟';
         if (currentLevelIdx > 0 && currentLives <= 0) {
             validateBtn.disabled = true;
-            gameFeedback.innerHTML += "<br/><br/><strong style='color:#a8201a'>⚠️ Te has quedado sin vidas en este nivel. Revisarás la teoría y lo intentarás de nuevo en 5 segundos.</strong>";
-            // Guardar intento fallido
-            State.saveGameLevel(currentLevelIdx, {
-                completado: false,
-                vidas_usadas: CONFIG.GAME.LIVES_PER_LEVEL,
-                tiempo_segundos: Math.floor((Date.now() - levelStartTime) / 1000)
-            });
-            setTimeout(() => {
-                loadLevel(currentLevelIdx);
-            }, 5000);
+            gameFeedback.innerHTML += "<br><strong style='color:#a8201a'>⚠️ Sin vidas. Reiniciando nivel en 5 segundos.</strong>";
+            State.saveGameLevel(currentLevelIdx, { completado: false, vidas_usadas: CONFIG.GAME.LIVES_PER_LEVEL, tiempo_segundos: Math.floor((Date.now() - levelStartTime) / 1000) });
+            setTimeout(() => loadLevel(currentLevelIdx), 5000);
         }
     }
 }
 
-// ═══════════════════════════════════════
-// Avance y finalización
-// ═══════════════════════════════════════
 async function goToNextLevel() {
     currentLevelIdx++;
-    if (currentLevelIdx <= 4) {
-        loadLevel(currentLevelIdx);
-    } else {
-        await finishGame();
-    }
+    if (currentLevelIdx <= 6) loadLevel(currentLevelIdx);
+    else await finishGame();
 }
 
 async function finishGame() {
@@ -617,13 +696,9 @@ async function finishGame() {
     gameStage.classList.add('hidden');
     levelTitle.textContent = "Parcial Finalizado";
     gameSummary.classList.remove('hidden');
-
     const gd = State.getGameData();
     document.getElementById('maxLevelDisplay').textContent = gd.nivel_alcanzado || 0;
-
-    // Enviar payload final consolidado
-    const payload = State.buildFinalPayload();
-    await DB.sendData(payload);
+    await DB.sendData(State.buildFinalPayload());
 }
 
 window.addEventListener('DOMContentLoaded', initGame);

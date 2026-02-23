@@ -38,7 +38,8 @@ const State = {
 
     saveGameOpenAnswers(answers) {
         let gameData = this.getGameData();
-        gameData.respuestas_abiertas = answers;
+        if (!gameData.respuestas_abiertas) gameData.respuestas_abiertas = {};
+        Object.assign(gameData.respuestas_abiertas, answers);
         sessionStorage.setItem('gameData', JSON.stringify(gameData));
     },
 
@@ -47,29 +48,28 @@ const State = {
         return res ? JSON.parse(res) : { niveles: {}, nivel_alcanzado: 0, respuestas_abiertas: {} };
     },
 
-    // Genera el payload final que combina Parte 1 y Parte 2
     buildFinalPayload() {
         const student = this.getStudent();
         const quiz = this.getQuizResults();
         const game = this.getGameData();
 
-        // Cálculo básico de nota basada en pesos
         let nota = 0;
         if (quiz) {
             const p1Score = (quiz.puntaje_total / CONFIG.QUIZ.TOTAL_QUESTIONS) * 5.0;
             nota += p1Score * CONFIG.SCORING.QUIZ_WEIGHT;
         }
 
-        // El juego tiene 4 niveles calificados (1-4). El nivel 0 (tutorial) no se califica
+        // 6 niveles calificados (1-6); nivel 0 (tutorial) no se califica
+        const totalCalificados = CONFIG.GAME.TOTAL_LEVELS || 6;
         let gameScore = 0;
         if (game && game.niveles) {
             let levelsCompleted = 0;
-            for (let i = 1; i <= 4; i++) {
+            for (let i = 1; i <= totalCalificados; i++) {
                 if (game.niveles[`nivel${i}`] && game.niveles[`nivel${i}`].completado) {
                     levelsCompleted++;
                 }
             }
-            gameScore = (levelsCompleted / 4) * 5.0;
+            gameScore = (levelsCompleted / totalCalificados) * 5.0;
             nota += gameScore * CONFIG.SCORING.GAME_WEIGHT;
         }
 
